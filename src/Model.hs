@@ -39,5 +39,11 @@ data Bullet = MkBullet { projectile :: Entity
                        }
 
 data Vector = MkVector Float Float
+data Point = MkPoint Float Float
 
+data Player = MkPlayer { ship :: Entity
+                       , orientation :: Vector
+                       , lives :: Int
+                       , score :: Int
+                       }
                 

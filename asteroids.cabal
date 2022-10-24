@@ -1,13 +1,13 @@
-name:                gloss-counter
+name:                asteroids
 version:             0.1.0.0
-author:              Alejandro Serrano
-maintainer:          A.SerranoMena@uu.nl
+author:              Fabian Rutten & Olaf Boekholt
+maintainer:          Fabian Rutten & Olaf Boekholt
 category:            Game
 build-type:          Simple
 cabal-version:       >=1.10
 
 
-executable gloss-counter
+executable asteroids
   main-is:             Main.hs
   build-depends:       base >= 4 && < 5,
                        gloss,

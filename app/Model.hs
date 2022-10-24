@@ -4,18 +4,6 @@ module Model where
 
 import Entity
 
-data InfoToShow = ShowNothing
-                | ShowANumber Int
-                | ShowAChar   Char
-
-data GameState = GameState {
-                   infoToShow  :: InfoToShow
-                 , elapsedTime :: Float
-                 }
-
-initialState :: GameState
-initialState = GameState ShowNothing 0
-
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] []

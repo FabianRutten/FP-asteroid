@@ -10,7 +10,7 @@ main :: IO ()
 main = playIO (InWindow "Asteroids" (800, 800) (300, 100)) -- Or FullScreen
               black            -- Background color
               30               -- Frames per second
-              initialState     -- Initial state
+              initialSpace     -- Initial state
               view             -- View function
               input            -- Event function
               step             -- Step function

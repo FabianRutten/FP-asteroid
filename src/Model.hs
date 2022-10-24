@@ -21,7 +21,7 @@ initialState = GameState ShowNothing 0
 data Space = MkSpace { player    :: Player
                      , asteroids :: [Asteroid]
                      , saucers   :: [Saucer]
-                     , bullets   :: [Bulet]
+                     , bullets   :: [Bullet]
                      }
 
 data Entity = MkEntity { size     :: Int
@@ -35,7 +35,7 @@ type Asteroid = Entity
 
 data Bullet = MkBullet { projectile :: Entity
                        , fromPlayer :: Bool
-                       , distance   :: Floatd
+                       , distance   :: Float
                        }
 
 data Vector = MkVector Float Float
@@ -46,4 +46,5 @@ data Player = MkPlayer { ship :: Entity
                        , lives :: Int
                        , score :: Int
                        }
+
                 

@@ -24,11 +24,11 @@ data Space = MkSpace { player    :: Player
                      , bullets   :: [Bullet]
                      }
 
-data Entity = MkEntity { size     :: Int
-                      , position  :: Point
-                      , direction :: Vector
-                      , speed     :: Float
-                      }
+data Entity = MkEntity { size      :: Int
+                       , position  :: Point
+                       , direction :: Vector
+                       , speed     :: Float
+                       }
 
 type Saucer = Entity
 type Asteroid = Entity
@@ -41,10 +41,10 @@ data Bullet = MkBullet { projectile :: Entity
 data Vector = MkVector Float Float
 data Point = MkPoint Float Float
 
-data Player = MkPlayer { ship :: Entity
+data Player = MkPlayer { ship        :: Entity
                        , orientation :: Vector
-                       , lives :: Int
-                       , score :: Int
+                       , lives       :: Int
+                       , score       :: Int
                        }
 
                 

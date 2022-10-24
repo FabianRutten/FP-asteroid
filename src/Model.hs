@@ -2,6 +2,8 @@
 --   which represent the state of the game
 module Model where
 
+import Entity
+
 data InfoToShow = ShowNothing
                 | ShowANumber Int
                 | ShowAChar   Char
@@ -24,11 +26,7 @@ data Space = MkSpace { player    :: Player
                      , bullets   :: [Bullet]
                      }
 
-data Entity = MkEntity { size      :: Int
-                       , position  :: Point
-                       , direction :: Vector
-                       , speed     :: Float
-                       }
+
 
 type Saucer = Entity
 type Asteroid = Entity
@@ -38,8 +36,7 @@ data Bullet = MkBullet { projectile :: Entity
                        , distance   :: Float
                        }
 
-data Vector = MkVector Float Float
-data Point = MkPoint Float Float
+
 
 data Player = MkPlayer { ship        :: Entity
                        , orientation :: Vector
@@ -47,4 +44,3 @@ data Player = MkPlayer { ship        :: Entity
                        , score       :: Int
                        }
 
-                

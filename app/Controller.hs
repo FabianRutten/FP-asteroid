@@ -10,7 +10,8 @@ import System.Random
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
-step secs space = undefined
+step secs space 
+     = undefined 
   -- = -- We show a new random number
   --   do randomNumber <- randomIO
   --      let newNumber = abs randomNumber `mod` 10

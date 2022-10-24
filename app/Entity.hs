@@ -6,6 +6,5 @@ data Entity = MkEntity { size      :: Int
                        , speed     :: Float
                        }
 
-data Vector = MkVector Float Float
-data Point = MkPoint Float Float
-
+data Vector = Vec Float Float
+data Point = Pt Float Float

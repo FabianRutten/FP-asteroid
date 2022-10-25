@@ -58,14 +58,14 @@ pause s = s {paused = not $ paused s}
 shoot :: Space -> Space
 shoot s = undefined
 
-moveForward :: Space -> Space
-moveForward s = undefined
+movePlayerForward :: Player -> Player
+movePlayerForward p = undefined
 
-rotatePlayerLeft :: Space -> Space
-rotatePlayerLeft s = undefined
+rotatePlayerLeft :: Player -> Player
+rotatePlayerLeft p = undefined
 
-rotatePlayerRight :: Space -> Space
-rotatePlayerRight s = undefined
+rotatePlayerRight ::Player -> Player
+rotatePlayerRight p = undefined
 
 escapeGame :: Space -> Space
 escapeGame s = undefined
@@ -74,4 +74,12 @@ updateTick :: Space -> Space
 updateTick = undefined
 
 alterPlayer :: Space -> Space
-alterPlayer = undefined
+alterPlayer s = let [left, fwd, right] = arrowkeysDown s
+                    p = player s
+                    playerLeft  | left      = rotatePlayerLeft p 
+                                | otherwise = p
+                    playerRight | right     = rotatePlayerRight playerLeft
+                                | otherwise = playerLeft
+                    playerFwd   | fwd       = movePlayerForward playerRight
+                                | otherwise = playerRight
+                in s {player = playerFwd}

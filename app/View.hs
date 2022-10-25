@@ -4,7 +4,6 @@ module View where
 
 import Graphics.Gloss
 import Model
-import Bitmap
 
 view :: Space -> IO Picture
 --view = return . viewPure
@@ -17,3 +16,6 @@ viewAll :: Space -> IO Picture
 viewAll space = do
                 player <- shipBMP
                 return $ pictures [translate 200 200 player]
+
+shipBMP :: IO Picture
+shipBMP = loadBMP "ship.bmp"

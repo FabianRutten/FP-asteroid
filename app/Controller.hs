@@ -3,10 +3,12 @@
 module Controller where
 
 import Model
+import Tick
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import Distribution.Compat.CharParsing (space)
 
 -- | Handle one iteration of the game lijst inlezen
 step :: Float -> Space -> IO Space
@@ -69,9 +71,6 @@ rotatePlayerRight p = undefined
 
 escapeGame :: Space -> Space
 escapeGame s = undefined
-
-updateTick :: Space -> Space
-updateTick = undefined
 
 alterPlayer :: Space -> Space
 alterPlayer s = let [left, fwd, right] = arrowkeysDown s

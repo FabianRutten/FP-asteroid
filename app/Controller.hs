@@ -5,12 +5,10 @@ module Controller where
 import Model
 import Tick
 
-import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
-import Distribution.Compat.CharParsing (space)
 
--- | Handle one iteration of the game lijst inlezen
+-- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
 step secs space | paused space = return space                              -- do nothing if paused
                 | otherwise    = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game

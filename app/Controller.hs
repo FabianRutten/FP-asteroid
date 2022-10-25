@@ -8,7 +8,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
--- | Handle one iteration of the game
+-- | Handle one iteration of the game lijst inlezen
 step :: Float -> Space -> IO Space
 step secs space | paused space = return space -- do nothing if paused
                 | otherwise    = return space
@@ -18,7 +18,7 @@ step secs space | paused space = return space -- do nothing if paused
   --      return $ GameState (ShowANumber newNumber) 0
 
 
--- | Handle user input
+-- | Handle user input lijst aanpassen
 input :: Event -> Space -> IO Space
 input e space = return (inputKey e space)
 

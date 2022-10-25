@@ -12,7 +12,7 @@ import Distribution.Compat.CharParsing (space)
 
 -- | Handle one iteration of the game lijst inlezen
 step :: Float -> Space -> IO Space
-step secs space | paused space = return space -- do nothing if paused
+step secs space | paused space = return space                              -- do nothing if paused
                 | otherwise    = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game
   -- = -- We show a new random number
   --   do randomNumber <- randomIO
@@ -20,7 +20,7 @@ step secs space | paused space = return space -- do nothing if paused
   --      return $ GameState (ShowANumber newNumber) 0
 
 
--- | Handle user input lijst aanpassen
+-- | Handle user input
 input :: Event -> Space -> IO Space
 input e space = return (inputKey e space)
 

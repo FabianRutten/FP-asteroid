@@ -7,6 +7,7 @@ import Model
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import Distribution.Compat.CharParsing (space)
 
 -- | Handle one iteration of the game lijst inlezen
 step :: Float -> Space -> IO Space
@@ -27,7 +28,7 @@ inputKey (EventKey (Char 'p') _ _ _) s -- pause/unpause when 'p' is pressed
   = pause s
 inputKey (EventKey (SpecialKey sk) _ _ _) s
   | paused s  = s                      -- no nothing if game is paused
-  | otherwise = case sk of 
+  | otherwise = case sk of
         KeySpace -> shoot s
         KeyUp    -> moveForward s
         KeyLeft  -> rotatePlayerLeft s
@@ -62,4 +63,33 @@ escapeGame :: Space -> Space
 escapeGame s = undefined
 
 updateTick :: Space -> Space
-updateTick = undefined
+updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkHits
+
+updateAsteroids :: Space -> Space
+updateAsteroids s = s {asteroids = map updateAsteroid $ asteroids s}
+
+updateBullets :: Space -> Space
+updateBullets = undefined
+
+updateSaucers :: Space -> Space
+updateSaucers = undefined
+
+updatePlayer :: Space -> Space
+updatePlayer = undefined
+
+updateAsteroid :: Asteroid -> Asteroid
+updateAsteroid = undefined
+
+updateBullet :: Bullet -> Bullet
+updateBullet = undefined
+
+updateSaucer :: Space -> Space
+updateSaucer = undefined
+
+checkHits :: Space -> Space
+checkHits = undefined
+
+
+
+
+

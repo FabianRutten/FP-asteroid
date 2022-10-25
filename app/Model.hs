@@ -3,13 +3,15 @@
 module Model where
 
 import Entity
+import Graphics.Gloss.Data.Point
+import Graphics.Gloss.Data.Vector
 
 --initials
 initialSpace :: Space
-initialSpace = MkSpace initialPlayer [] [] [] False (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] True (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (Pt 400 400) (Vec 0 0) 0) (Vec 0 0) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (400,400) (0,0) 0) (0,0) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

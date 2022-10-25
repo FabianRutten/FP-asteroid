@@ -1,7 +1,8 @@
 module Tick where
 
 import Model
-
+import Entity (Entity (position))
+import Data.Data (Data)
 
 
 updateTick :: Space -> Space
@@ -17,9 +18,14 @@ updateSaucers :: Space -> Space
 updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 
 updatePlayer :: Space -> Space
-updatePlayer s = s {player = update $ player s}
-        where
-            update p = p
+updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
+                     go = undefined
+                in s {player = update $ player s}
+                
+updateShipPosition :: Entity -> Entity
+updateShipPosition ship = ship {position = update position ship}
+                    where 
+                         update = undefined
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid = undefined

@@ -18,4 +18,5 @@ executable asteroids
                      , Model
                      , View
                      , Entity
+                     , Bitmap
   default-language:    Haskell2010

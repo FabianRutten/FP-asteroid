@@ -11,7 +11,7 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
 step secs space | paused space = return space -- do nothing if paused
-                | otherwise    = undefined
+                | otherwise    = return space
   -- = -- We show a new random number
   --   do randomNumber <- randomIO
   --      let newNumber = abs randomNumber `mod` 10

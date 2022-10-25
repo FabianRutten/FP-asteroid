@@ -5,6 +5,9 @@ module Model where
 import Entity
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
+import Graphics.Gloss.Data.Point.Arithmetic
+
+addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
 
 --initials
 initialSpace :: Space

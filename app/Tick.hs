@@ -1,8 +1,10 @@
 module Tick where
 
 import Model
-import Entity (Entity (position))
+import Entity
 import Data.Data (Data)
+import Graphics.Gloss.Data.Point
+import Graphics.Gloss.Data.Vector
 
 
 updateTick :: Space -> Space
@@ -21,11 +23,11 @@ updatePlayer :: Space -> Space
 updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
                      go = undefined
                 in s {player = update $ player s}
-                
+
 updateShipPosition :: Entity -> Entity
-updateShipPosition ship = ship {position = update position ship}
-                    where 
-                         update = undefined
+updateShipPosition ship = ship {position = update $ position ship}
+                    where
+                         update p = mulSV (speed ship) (direction ship) `addPoint` p
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid = undefined

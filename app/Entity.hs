@@ -2,8 +2,8 @@ module Entity where
 
 data Entity = MkEntity { size      :: Int
                        , position  :: Point
-                       , direction :: Vector
-                       , speed     :: Float
+                       , direction :: Vector 
+                       , speed     :: Float --pixels p/tick (30/s)
                        }
 
 data Vector = Vec Float Float

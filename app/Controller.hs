@@ -12,10 +12,8 @@ import System.Random
 step :: Float -> Space -> IO Space
 step secs space | paused space = return space                              -- do nothing if paused
                 | otherwise    = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game
-  -- = -- We show a new random number
   --   do randomNumber <- randomIO
-  --      let newNumber = abs randomNumber `mod` 10
-  --      return $ GameState (ShowANumber newNumber) 0
+  --      return $ GameState (ShowANumber (abs randomNumber `mod` 10)) 0
 
 
 -- | Handle user input
@@ -23,18 +21,18 @@ input :: Event -> Space -> IO Space
 input e space = return (inputKey e space)
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey (Char 'p') _ _ _) s -- pause/unpause when 'p' is pressed
+inputKey (EventKey (Char 'p') _ _ _) s    -- pause/unpause when 'p' is pressed
   = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
-  | paused s  = s                      -- do nothing if game is paused
+  | paused s  = s                         -- do nothing if game is paused
   | otherwise = case sk of 
-        KeyLeft  -> setArrowkey 0 state s
+        KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
-        KeySpace -> shoot s
-        KeyEsc   -> escapeGame s
-        _        -> s                  -- keep the same if no relevant special key is pressed
-inputKey _ s = s                       -- keep the same if no relevant key is pressed or no relevant event is called
+        KeySpace -> shoot s               -- shoot on space
+        KeyEsc   -> escapeGame s          -- escape game on esc
+        _        -> s                     -- keep the same if no relevant special key is pressed
+inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
 
 -- change the bool in arrowkeysDown at a certain position based on the state of the key
@@ -46,12 +44,7 @@ setArrowkey pos state s
     in 
       s {arrowkeysDown = x ++ y : ys}
 
--- inputKey (EventKey (Char c) _ _ _) gstate
---   = -- If the user presses a character key, show that one
---     gstate { infoToShow = ShowAChar c }
--- inputKey _ gstate = gstate -- Otherwise keep the same
-
---pause the game
+-- flip paused bool
 pause :: Space -> Space
 pause s = s {paused = not $ paused s}
 
@@ -67,9 +60,13 @@ rotatePlayerLeft p = undefined
 rotatePlayerRight ::Player -> Player
 rotatePlayerRight p = undefined
 
+-- for now return to initalSpace, reset game
 escapeGame :: Space -> Space
-escapeGame s = undefined
+escapeGame s = initialSpace
 
+-- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
+-- possible to hold multiple keys at the same time
+-- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
 alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                     p = player s

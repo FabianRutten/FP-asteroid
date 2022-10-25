@@ -60,3 +60,6 @@ rotatePlayerRight s = undefined
 
 escapeGame :: Space -> Space
 escapeGame s = undefined
+
+updateTick :: Space -> Space
+updateTick = undefined

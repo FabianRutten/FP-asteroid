@@ -6,7 +6,7 @@ import Entity
 
 --initials
 initialSpace :: Space
-initialSpace = MkSpace initialPlayer [] [] []
+initialSpace = MkSpace initialPlayer [] [] [] False
 
 initialPlayer :: Player
 initialPlayer = MkPlayer (MkEntity 1 (Pt 400 400) (Vec 0 0) 0) (Vec 0 0) 3 0
@@ -15,6 +15,7 @@ data Space = MkSpace { player    :: Player
                      , asteroids :: [Asteroid]
                      , saucers   :: [Saucer]
                      , bullets   :: [Bullet]
+                     , paused    :: Bool
                      }
 
 type Saucer = Entity

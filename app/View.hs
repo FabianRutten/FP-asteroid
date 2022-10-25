@@ -16,4 +16,4 @@ viewPure gstate = undefined
 viewAll :: Space -> IO Picture
 viewAll space = do
                 player <- shipBMP
-                return $ pictures [player]
+                return $ pictures [translate 200 200 player]

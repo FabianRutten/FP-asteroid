@@ -6,6 +6,9 @@ import Data.Data (Data)
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
 
+screensize :: Float
+screensize = 800
+
 
 updateTick :: Space -> Space
 updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkHits
@@ -30,12 +33,14 @@ updateShipPosition ship = let newPoint = newShipPoint (position ship) ship
                               newShipPoint p ship = mulSV (speed ship) (direction ship) `addPoint` p
 
 
-updatePoint :: Point -> Point --screensize + 100 (dark place) as maximum point values. with negatives as well -> swap other angle and swap sides
-updatePoint new@(x,y) | x > 800 + 100 = undefined
-                      | y > 800 + 100 = undefined
-                      | x < (-100) = undefined
-                      | y < (-100) = undefined
+updatePoint :: Point -> Point --screensize/2 + 100 (dark place) as maximum point values. with negatives as well -> swap sides
+updatePoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
+                      | y > screen + 100    = ((-screen)-100 , x)
+                      | x < (-screen) - 100 = (screen+100 , y)
+                      | y < (-screen) - 100 = (screen+100, x)
                       | otherwise =  new
+                where
+                    screen = screensize/2
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid = undefined

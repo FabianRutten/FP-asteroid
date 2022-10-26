@@ -28,13 +28,13 @@ updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
 
 updateShipPosition :: Entity -> Entity
 updateShipPosition ship = let newPoint = newShipPoint (position ship) ship
-                          in ship {position = updatePoint newPoint}
+                          in ship {position = checkPoint newPoint}
                           where
                               newShipPoint p ship = mulSV (speed ship) (direction ship) `addPoint` p
 
 
-updatePoint :: Point -> Point --screensize/2 + 100 (dark place) as maximum point values. with negatives as well -> swap sides
-updatePoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
+checkPoint :: Point -> Point --screensize/2 + 100 (dark place) as maximum point values. with negatives as well -> swap sides
+checkPoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
                       | y > screen + 100    = ((-screen)-100 , x)
                       | x < (-screen) - 100 = (screen+100 , y)
                       | y < (-screen) - 100 = (screen+100, x)

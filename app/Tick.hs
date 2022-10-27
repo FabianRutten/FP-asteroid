@@ -26,15 +26,15 @@ updatePlayer :: Space -> Space
 updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
                  in s {player = update $ player s}
             where
-                updateShipPosition = updatePointEntity
+                updateShipPosition = updateEntityPosition
 
 updateAsteroid :: Asteroid -> Asteroid
-updateAsteroid = updatePointEntity
+updateAsteroid = updateEntityPosition
 
 updateBullet :: Bullet -> Bullet
 updateBullet = updateBulletPosition . updateBulletDistance
             where 
-                updateBulletPosition b = b {projectile = updatePointEntity (projectile b)}
+                updateBulletPosition b = b {projectile = updateEntityPosition (projectile b)}
                 updateBulletDistance = undefined
 
 updateSaucer :: Saucer -> Saucer
@@ -52,7 +52,7 @@ checkPoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
                 where
                      screen = screensize/2
 
-updatePointEntity :: Entity -> Entity
-updatePointEntity a = a{ position = checkPoint (movePoint (position a) a)}
+updateEntityPosition :: Entity -> Entity
+updateEntityPosition a = a{ position = checkPoint (movePoint (position a) a)}
                 where
                    movePoint p a = mulSV (speed a) (direction a) `addPoint` p

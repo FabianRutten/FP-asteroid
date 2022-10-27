@@ -8,7 +8,8 @@ import Graphics.Gloss.Data.Vector
 
 screensize :: Float
 screensize = 800
-
+blackMargin :: Float
+blackMargin = 100
 
 updateTick :: Space -> Space
 updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkHits
@@ -33,9 +34,12 @@ updateAsteroid = updateEntityPosition
 
 updateBullet :: Bullet -> Bullet
 updateBullet = updateBulletPosition . updateBulletDistance
-            where 
+            where
                 updateBulletPosition b = b {projectile = updateEntityPosition (projectile b)}
-                updateBulletDistance = undefined
+                updateBulletDistance b = b {distance = distance b + speed (projectile b)}
+
+checkBulletsDistance :: [Bullet] -> [Bullet]
+checkBulletsDistance = filter (\x -> distance x < (screensize/2))
 
 updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
@@ -43,11 +47,11 @@ updateSaucer s = s
 checkHits :: Space -> Space
 checkHits s = s
 
-checkPoint :: Point -> Point --screensize/2 + 100 (dark place) as maximum point values. with negatives as well -> swap sides
-checkPoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
-                     | y > screen + 100    = ((-screen)-100 , x)
-                     | x < (-screen) - 100 = (screen+100    , y)
-                     | y < (-screen) - 100 = (screen+100    , x)
+checkPoint :: Point -> Point --screensize/2 + blackMargin (dark place) as maximum point values. with negatives as well -> swap sides
+checkPoint new@(x,y) | x > screen + blackMargin    = ((-screen)-blackMargin , y)
+                     | y > screen + blackMargin    = ((-screen)-blackMargin , x)
+                     | x < (-screen) - blackMargin = (screen+blackMargin    , y)
+                     | y < (-screen) - blackMargin = (screen+blackMargin    , x)
                      | otherwise =  new
                 where
                      screen = screensize/2

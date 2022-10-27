@@ -7,15 +7,16 @@ import Model
 
 view :: Space -> IO Picture
 --view = return . viewPure
-view _ = shipBMP
+view _ = undefined
 
 viewPure :: Space -> Picture
 viewPure gstate = undefined
 
 viewAll :: Space -> IO Picture
 viewAll space = do
-                player <- shipBMP
-                return $ pictures [translate 200 200 player]
+                player <- playerBMP (player space)
+                return $ pictures [player]
 
-shipBMP :: IO Picture
-shipBMP = loadBMP "ship.bmp"
+
+playerBMP :: Player -> IO Picture
+playerBMP = undefined 

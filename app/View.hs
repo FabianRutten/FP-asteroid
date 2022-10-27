@@ -4,6 +4,7 @@
 module View where
 
 import Graphics.Gloss
+import Graphics.Gloss.Data.Vector
 import Model
 import Distribution.Simple (UserHooks(postInst))
 
@@ -28,6 +29,11 @@ viewPlaying = render
 translateToPosition :: Point -> Picture -> Picture
 translateToPosition (x,y) = translate x y
 
+rotateToOrientation :: Vector -> Picture -> Picture
+rotateToOrientation v@(x,y) | x < 0 = Rotate $ - shift
+                            | otherwise = Rotate shift
+                    where
+                        shift = degrees $ angleVV v (0,1)
 
 
 class Render a where
@@ -41,7 +47,7 @@ instance Render Space where
 -- All instances to turn one of the attributes of the space into a picture
 instance Render Player where
     render :: Player -> Picture
-    render p = translateToPosition (position $ ship p) (color white $ text $ show (orientation p) ++ show (speed $ ship p))--(text "A")
+    render p = rotateToOrientation (orientation p) $ translateToPosition (position $ ship p) (color white $ text $ "^" ++ show (orientation p) ++ show (speed $ ship p))--(text "A")
 
 instance Render Asteroid where
     render :: Asteroid -> Picture

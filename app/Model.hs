@@ -3,7 +3,7 @@
 module Model where
 
 import Graphics.Gloss ( Point, Vector, Picture )
-import Graphics.Gloss.Data.Point.Arithmetic
+import Graphics.Gloss.Data.Point.Arithmetic ( Point, (+) )
 
 addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
@@ -29,7 +29,7 @@ initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Playing (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 100) (0,0) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,0) 100) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -68,3 +68,7 @@ data Player = MkPlayer { ship        :: Entity
                        , score       :: Int
                        }
 
+radians :: Float -> Float --convert degrees to radians
+radians x = x / 180 * pi
+degrees :: Float -> Float --convert radians to degrees
+degrees x =  x / pi * 180

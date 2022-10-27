@@ -25,31 +25,34 @@ updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 updatePlayer :: Space -> Space
 updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
                  in s {player = update $ player s}
+            where
+                updateShipPosition = updatePoint
 
-updateShipPosition :: Entity -> Entity
-updateShipPosition ship = let newPoint = newShipPoint (position ship) ship
-                          in ship {position = checkPoint newPoint}
-                          where
-                              newShipPoint p ship = mulSV (speed ship) (direction ship) `addPoint` p
+updateAsteroid :: Asteroid -> Asteroid
+updateAsteroid = updatePoint
 
+updateBullet :: Bullet -> Bullet
+updateBullet = updateBulletPosition . updateBulletDistance
+            where 
+                updateBulletPosition b = b {projectile = updatePoint (projectile b)}
+                updateBulletDistance = undefined
+
+updateSaucer :: Saucer -> Saucer
+updateSaucer s = s
+
+checkHits :: Space -> Space
+checkHits s = s
 
 checkPoint :: Point -> Point --screensize/2 + 100 (dark place) as maximum point values. with negatives as well -> swap sides
 checkPoint new@(x,y) | x > screen + 100    = ((-screen)-100 , y)
-                      | y > screen + 100    = ((-screen)-100 , x)
-                      | x < (-screen) - 100 = (screen+100 , y)
-                      | y < (-screen) - 100 = (screen+100, x)
-                      | otherwise =  new
+                     | y > screen + 100    = ((-screen)-100 , x)
+                     | x < (-screen) - 100 = (screen+100    , y)
+                     | y < (-screen) - 100 = (screen+100    , x)
+                     | otherwise =  new
                 where
-                    screen = screensize/2
+                     screen = screensize/2
 
-updateAsteroid :: Asteroid -> Asteroid
-updateAsteroid = undefined
-
-updateBullet :: Bullet -> Bullet
-updateBullet = undefined
-
-updateSaucer :: Saucer -> Saucer
-updateSaucer = undefined
-
-checkHits :: Space -> Space
-checkHits = undefined
+updatePoint :: Entity -> Entity
+updatePoint a = a{ position = checkPoint (movePoint (position a) a)}
+                where
+                   movePoint p a = mulSV (speed a) (direction a) `addPoint` p

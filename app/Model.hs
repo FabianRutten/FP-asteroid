@@ -19,6 +19,9 @@ floatBlackMargin = fromIntegral blackMargin
 halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
+playerDrag :: Float
+playerDrag = 10
+
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] True (replicate 3 False)

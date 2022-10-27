@@ -9,12 +9,22 @@ import Graphics.Gloss.Data.Point.Arithmetic
 
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
 
+--application wide constants
+screensize :: Int
+screensize = 800
+blackMargin :: Int
+blackMargin = 100
+floatBlackMargin :: Float
+floatBlackMargin = fromIntegral blackMargin
+halfscreen :: Float
+halfscreen = fromIntegral screensize / 2
+
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] True (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (400,400) (0,0) 0) (0,0) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 0) (0,0) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

@@ -7,7 +7,7 @@ import View
 import Graphics.Gloss.Interface.IO.Game
 
 main :: IO ()
-main = playIO (InWindow "Asteroids" (800, 800) (300, 100)) -- Or FullScreen
+main = playIO (InWindow "Asteroids" (screensize, screensize) (300, 100)) -- Or FullScreen
               black            -- Background color
               30               -- Frames per second
               initialSpace     -- Initial state

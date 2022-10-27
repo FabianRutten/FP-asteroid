@@ -1,7 +1,6 @@
 module Tick where
 
 import Model
-import Entity
 import Data.Data (Data)
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector

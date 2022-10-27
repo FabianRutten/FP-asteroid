@@ -2,7 +2,6 @@
 --   which represent the state of the game
 module Model where
 
-import Entity
 import Graphics.Gloss ( Point, Vector, Picture )
 import Graphics.Gloss.Data.Point.Arithmetic
 

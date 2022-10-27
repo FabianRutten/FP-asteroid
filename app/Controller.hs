@@ -21,7 +21,7 @@ input :: Event -> Space -> IO Space
 input e space = return (inputKey e space)
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey (Char 'p') _ _ _) s    -- pause/unpause when 'p' is pressed
+inputKey (EventKey (Char 'p') Down _ _) s    -- pause/unpause when 'p' is pressed
   = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
   | paused s == Paused  = s               -- do nothing if game is paused

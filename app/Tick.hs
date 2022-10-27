@@ -9,7 +9,7 @@ import Graphics.Gloss.Data.Vector
 
 
 updateTick :: Space -> Space
-updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkHits
+updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . chechCollisions
 
 updateAsteroids :: Space -> Space
 updateAsteroids s = s {asteroids = map updateAsteroid $ asteroids s}
@@ -25,10 +25,13 @@ updateSaucers :: Space -> Space
 updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 
 updatePlayer :: Space -> Space
-updatePlayer s = let update p = p {ship = updateShipPosition (ship p)}
+updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship p)}
                  in s {player = update $ player s}
             where
+                updateShipPosition :: Entity -> Entity
                 updateShipPosition = updateEntityPosition
+                dragShip :: Entity -> Entity
+                dragShip s = s {speed = max 0 (speed s - playerDrag)}
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid = updateEntityPosition
@@ -44,8 +47,8 @@ updateBullet = updateBulletPosition . updateBulletDistance
 updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
 
-checkHits :: Space -> Space
-checkHits s = s
+chechCollisions :: Space -> Space
+chechCollisions s = s
 
 checkPoint :: Point -> Point --screensize/2 + floatBlackMargin (dark place) as maximum point values. with negatives as well -> swap sides
 checkPoint new@(x,y) | x >  (halfscreen + floatBlackMargin)    = ((-halfscreen) -floatBlackMargin , y)

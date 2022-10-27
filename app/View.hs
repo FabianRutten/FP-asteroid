@@ -4,6 +4,8 @@ module View where
 
 import Graphics.Gloss
 import Model
+import Distribution.Simple (UserHooks(postInst))
+import Entity (Entity(position))
 
 view :: Space -> IO Picture
 view = return . viewPure
@@ -24,8 +26,16 @@ viewPlaying s = undefined
 
 viewAll :: Space -> IO Picture
 viewAll space = do
-                player <- shipBMP
-                return $ pictures [translate 200 200 player]
+                player <- playerPicture (player space)
+                return $ pictures [player]
 
-shipBMP :: IO Picture
-shipBMP = loadBMP "ship.bmp"
+
+playerPicture :: Player -> IO Picture
+playerPicture p = return $ translateToPosition (position $ ship p) $ color white (text "A")
+
+
+
+
+
+translateToPosition :: Point -> Picture -> Picture
+translateToPosition (x,y) = translate x y

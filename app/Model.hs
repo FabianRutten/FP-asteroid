@@ -19,12 +19,15 @@ floatBlackMargin = fromIntegral blackMargin
 halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
+playerDrag :: Float
+playerDrag = 0
+
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Playing (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 0) (0,0) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 100) (0,0) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

@@ -34,7 +34,7 @@ updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship 
                 dragShip s = s {speed = max 0 (speed s - playerDrag)}
 
 updateAsteroid :: Asteroid -> Asteroid
-updateAsteroid = updateEntityPosition
+updateAsteroid a = MkAst $ updateEntityPosition $ entityAsteroid a
 
 updateBullet :: Bullet -> Bullet
 updateBullet = updateBulletPosition . updateBulletDistance

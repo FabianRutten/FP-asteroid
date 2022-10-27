@@ -25,16 +25,19 @@ viewPlaying :: Space -> Picture
 viewPlaying s = undefined
 
 viewAll :: Space -> IO Picture
-viewAll space = do
-                player <- playerPicture (player space)
-                return $ pictures [player]
+viewAll s = return $ pictures [render $ player s]
 
+class Render a where
+    render :: a -> Picture
 
-playerPicture :: Player -> IO Picture
-playerPicture p = return $ translateToPosition (position $ ship p) $ color white $ text $ show (position $ ship p) ++ show (speed $ ship p)--(text "A")
+instance Render Player where
+    render p = translateToPosition (position $ ship p) $ color white $ text $ show (position $ ship p) ++ show (speed $ ship p)--(text "A")
 
+instance Render Asteroid where
+    render a = undefined
 
-
+instance Render Saucer where
+    render s = undefined
 
 
 translateToPosition :: Point -> Picture -> Picture

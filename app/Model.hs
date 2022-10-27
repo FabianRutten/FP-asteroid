@@ -3,19 +3,22 @@
 module Model where
 
 import Entity
-import Graphics.Gloss.Data.Point
-import Graphics.Gloss.Data.Vector
+import Graphics.Gloss ( Point, Vector, Picture )
 import Graphics.Gloss.Data.Point.Arithmetic
 
+addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
 
 --application wide constants
 screensize :: Int
 screensize = 800
+
 blackMargin :: Int
 blackMargin = 100
+
 floatBlackMargin :: Float
 floatBlackMargin = fromIntegral blackMargin
+
 halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
@@ -44,8 +47,8 @@ data Paused = Paused | Unpaused
 data GameState = Playing | GameOver
     deriving (Eq, Show)
 
-type Saucer = Entity
-type Asteroid = Entity
+newtype Saucer = MkSaucer { entitySaucer :: Entity}
+newtype Asteroid = MkAst { entityAsteroid :: Entity}
 
 data Bullet = MkBullet { projectile :: Entity
                        , fromPlayer :: Bool

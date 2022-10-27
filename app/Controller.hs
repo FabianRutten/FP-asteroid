@@ -24,7 +24,7 @@ inputKey :: Event -> Space -> Space
 inputKey (EventKey (Char 'p') _ _ _) s    -- pause/unpause when 'p' is pressed
   = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
-  | paused s == Paused  = s                         -- do nothing if game is paused
+  | paused s == Paused  = s               -- do nothing if game is paused
   | otherwise           = case sk of 
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s

@@ -7,6 +7,7 @@ import Tick
 
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import Graphics.Gloss.Data.Vector
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
@@ -55,11 +56,11 @@ shoot s = undefined
 movePlayerForward :: Player -> Player
 movePlayerForward p = undefined
 
-rotatePlayerLeft :: Player -> Player
-rotatePlayerLeft p = undefined
+rotateSpeed :: Float
+rotateSpeed = 0.01
 
-rotatePlayerRight ::Player -> Player
-rotatePlayerRight p = undefined
+rotatePlayer :: Float -> Player -> Player
+rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
 
 -- for now return to initalSpace, reset game
 escapeGame :: Space -> Space
@@ -71,9 +72,9 @@ escapeGame s = initialSpace
 alterPlayer :: Space -> Space
 alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                     p = player s
-                    playerLeft  | left      = rotatePlayerLeft p 
+                    playerLeft  | left      = rotatePlayer rotateSpeed p 
                                 | otherwise = p
-                    playerRight | right     = rotatePlayerRight playerLeft
+                    playerRight | right     = rotatePlayer (-rotateSpeed) playerLeft
                                 | otherwise = playerLeft
                     playerFwd   | fwd       = movePlayerForward playerRight
                                 | otherwise = playerRight

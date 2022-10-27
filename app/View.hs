@@ -41,7 +41,7 @@ instance Render Space where
 -- All instances to turn one of the attributes of the space into a picture
 instance Render Player where
     render :: Player -> Picture
-    render p = translateToPosition (position $ ship p) (color white $ text $ show (position $ ship p) ++ show (speed $ ship p))--(text "A")
+    render p = translateToPosition (position $ ship p) (color white $ text $ show (orientation p) ++ show (speed $ ship p))--(text "A")
 
 instance Render Asteroid where
     render :: Asteroid -> Picture

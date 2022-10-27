@@ -20,14 +20,14 @@ halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
 playerDrag :: Float
-playerDrag = 10
+playerDrag = 0
 
 --initials
 initialSpace :: Space
-initialSpace = MkSpace initialPlayer [] [] [] True (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] False (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 0) (0,0) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 100) (0,0) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

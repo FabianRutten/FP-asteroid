@@ -5,7 +5,7 @@ module View where
 import Graphics.Gloss
 import Model
 import Distribution.Simple (UserHooks(postInst))
-import Entity (Entity(position))
+import Entity
 
 view :: Space -> IO Picture
 view = return . viewPure
@@ -31,7 +31,7 @@ viewAll space = do
 
 
 playerPicture :: Player -> IO Picture
-playerPicture p = return $ translateToPosition (position $ ship p) $ color white (text "A")
+playerPicture p = return $ translateToPosition (position $ ship p) $ color white $ text $ show (position $ ship p) ++ show (speed $ ship p)--(text "A")
 
 
 

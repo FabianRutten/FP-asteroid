@@ -22,7 +22,7 @@ viewGameOver :: Space -> Picture
 viewGameOver s = undefined
 
 viewPlaying :: Space -> Picture
-viewPlaying s = undefined
+viewPlaying s = pictures (render (player s) : map render (asteroids s) ++ map render (saucers s) ++ map render (bullets s))
 
 viewAll :: Space -> IO Picture
 viewAll s = return $ pictures [render $ player s]
@@ -38,6 +38,9 @@ instance Render Asteroid where
 
 instance Render Saucer where
     render s = undefined
+
+instance Render Bullet where
+    render b = undefined
 
 
 translateToPosition :: Point -> Picture -> Picture

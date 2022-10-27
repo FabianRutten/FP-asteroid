@@ -11,7 +11,7 @@ main = playIO (InWindow "Asteroids" (screensize, screensize) (300, 100)) -- Or F
               black            -- Background color
               30               -- Frames per second
               initialSpace     -- Initial state
-              viewAll          -- View function
+              view          -- View function
               input            -- Event function
               step             -- Step function
     

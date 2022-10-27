@@ -47,6 +47,12 @@ data Paused = Paused | Unpaused
 data GameState = Playing | GameOver
     deriving (Eq, Show)
 
+data Entity = MkEntity { size      :: Int
+                       , position  :: Point
+                       , direction :: Vector 
+                       , speed     :: Float --pixels p/tick (30/s)
+                       }
+
 newtype Saucer = MkSaucer { entitySaucer :: Entity}
 newtype Asteroid = MkAst { entityAsteroid :: Entity}
 

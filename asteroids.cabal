@@ -17,6 +17,5 @@ executable asteroids
   other-modules:       Controller
                      , Model
                      , View
-                     , Entity
                      , Tick
   default-language:    Haskell2010

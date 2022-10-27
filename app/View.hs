@@ -6,11 +6,21 @@ import Graphics.Gloss
 import Model
 
 view :: Space -> IO Picture
---view = return . viewPure
-view _ = shipBMP
+view = return . viewPure
 
 viewPure :: Space -> Picture
-viewPure gstate = undefined
+viewPure s | paused s    == Paused   = viewPaused s
+           | gameState s == GameOver = viewGameOver s
+           | otherwise               = viewPlaying s
+
+viewPaused :: Space -> Picture
+viewPaused s = undefined
+
+viewGameOver :: Space -> Picture
+viewGameOver s = undefined
+
+viewPlaying :: Space -> Picture
+viewPlaying s = undefined
 
 viewAll :: Space -> IO Picture
 viewAll space = do

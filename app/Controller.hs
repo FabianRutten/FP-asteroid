@@ -10,8 +10,8 @@ import System.Random
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
-step secs space | paused space = return space                              -- do nothing if paused
-                | otherwise    = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game
+step secs space | paused space == Paused = return space                              -- do nothing if paused
+                | otherwise              = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game
   --   do randomNumber <- randomIO
   --      return $ GameState (ShowANumber (abs randomNumber `mod` 10)) 0
 
@@ -24,8 +24,8 @@ inputKey :: Event -> Space -> Space
 inputKey (EventKey (Char 'p') _ _ _) s    -- pause/unpause when 'p' is pressed
   = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
-  | paused s  = s                         -- do nothing if game is paused
-  | otherwise = case sk of 
+  | paused s == Paused  = s                         -- do nothing if game is paused
+  | otherwise           = case sk of 
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
@@ -44,9 +44,10 @@ setArrowkey pos state s
     in 
       s {arrowkeysDown = x ++ y : ys}
 
--- flip paused bool
+-- flip paused state
 pause :: Space -> Space
-pause s = s {paused = not $ paused s}
+pause s | paused s == Paused = s {paused = Unpaused}
+        | otherwise          = s {paused = Paused}
 
 shoot :: Space -> Space
 shoot s = undefined

@@ -21,7 +21,7 @@ halfscreen = fromIntegral screensize / 2
 
 --initials
 initialSpace :: Space
-initialSpace = MkSpace initialPlayer [] [] [] True (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Playing (replicate 3 False)
 
 initialPlayer :: Player
 initialPlayer = MkPlayer (MkEntity 1 (0,0) (0,0) 0) (0,0) 3 0
@@ -30,9 +30,16 @@ data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
                      , saucers       :: [Saucer]
                      , bullets       :: [Bullet]
-                     , paused        :: Bool
+                     , paused        :: Paused
+                     , gameState     :: GameState
                      , arrowkeysDown :: [Bool]
                      }
+
+data Paused = Paused | Unpaused
+    deriving (Eq, Show)
+
+data GameState = Playing | GameOver
+    deriving (Eq, Show)
 
 type Saucer = Entity
 type Asteroid = Entity

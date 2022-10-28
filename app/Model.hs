@@ -33,7 +33,7 @@ initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,1) 2) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 0.5 (-200,0) (0,1) 2) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -50,7 +50,7 @@ data Paused = Paused | Unpaused
 data GameState = Alive | GameOver
     deriving (Eq, Show)
 
-data Entity = MkEntity { size      :: Int
+data Entity = MkEntity { size      :: Float
                        , position  :: Point
                        , direction :: Vector 
                        , speed     :: Float --pixels p/tick (30/s)

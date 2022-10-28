@@ -6,26 +6,33 @@ module View where
 import Graphics.Gloss
 import Graphics.Gloss.Data.Vector
 import Model
-import Distribution.Simple (UserHooks(postInst))
 
+-- load all bitmaps and call pure function
 view :: Space -> IO Picture
-view = return . viewPure
+view s = do
+    backgroundBMP <- loadBMP "ship.bmp"
+    playerBMP     <- loadBMP "ship.bmp"
+    asteroidBMP   <- loadBMP "ship.bmp"
+    saucerBMP     <- loadBMP "ship.bmp"
+    bulletBMP     <- loadBMP "ship.bmp"
+    return $ viewPure s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP]
 
-viewPure :: Space -> Picture
+-- choose correct view function based on the state of the game
+viewPure :: Space -> [Picture] -> Picture
 viewPure s | paused s    == Paused   = viewPaused s
            | gameState s == GameOver = viewGameOver s
            | otherwise               = viewPlaying s
 
-viewPaused :: Space -> Picture
-viewPaused s = pictures [color white (text "PAUSED"), render s]
+viewPaused :: Space -> [Picture] -> Picture
+viewPaused s bmps = pictures [renderSpace s bmps, color red (text "PAUSED")]
 
-viewGameOver :: Space -> Picture
-viewGameOver s = pictures [color white (text "GAME OVER"), render s]
+viewGameOver :: Space -> [Picture] -> Picture
+viewGameOver s bmps = pictures [renderSpace s bmps, color red (text "GAME OVER")]
 
-viewPlaying :: Space -> Picture
-viewPlaying = render
+viewPlaying :: Space -> [Picture] -> Picture
+viewPlaying = renderSpace
 
-
+-- functions to alter a picture
 translateToPosition :: Point -> Picture -> Picture
 translateToPosition (x,y) = translate x y
 
@@ -35,28 +42,33 @@ rotateToOrientation v@(x,_) | x < 0 = Rotate $ - shift
                     where
                         shift = degrees $ angleVV v (0,1)
 
+scaleUniform :: Float -> Picture -> Picture
+scaleUniform s = scale s s
+
+-- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
+renderSpace :: Space -> [Picture] -> Picture
+renderSpace s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP] 
+    = pictures (render playerBMP (player s) : map (render asteroidBMP) (asteroids s) ++ map (render saucerBMP) (saucers s) ++ map (render bulletBMP) (bullets s))
+renderSpace s _ = Blank -- go away non-exhaustive pattern match error
 
 class Render a where
-    render :: a -> Picture
-
--- Turn entire space into a picture by calling render on all relevant attributes
-instance Render Space where
-    render :: Space -> Picture
-    render s = pictures (render (player s) : map render (asteroids s) ++ map render (saucers s) ++ map render (bullets s))
+    render :: Picture -> a -> Picture
 
 -- All instances to turn one of the attributes of the space into a picture
 instance Render Player where
-    render :: Player -> Picture
-    render p =  translateToPosition (position $ ship p) $ rotateToOrientation (orientation p) (color white $ text "A")
+    render :: Picture -> Player -> Picture
+    render bmp p = translateToPosition (position entity) $ rotateToOrientation (orientation p) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+        where
+            entity = ship p
 
 instance Render Asteroid where
-    render :: Asteroid -> Picture
-    render a = undefined
+    render :: Picture -> Asteroid -> Picture
+    render bmp a = undefined
 
 instance Render Saucer where
-    render :: Saucer -> Picture
-    render s = undefined
+    render :: Picture -> Saucer -> Picture
+    render bmp s = undefined
 
 instance Render Bullet where
-    render :: Bullet -> Picture
-    render b = undefined
+    render :: Picture -> Bullet -> Picture
+    render bmp b = undefined

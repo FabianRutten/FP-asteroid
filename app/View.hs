@@ -48,7 +48,13 @@ scaleUniform s = scale s s
 -- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
 renderSpace :: Space -> [Picture] -> Picture
 renderSpace s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP] 
-    = pictures (render playerBMP (player s) : map (render asteroidBMP) (asteroids s) ++ map (render saucerBMP) (saucers s) ++ map (render bulletBMP) (bullets s))
+    = pictures (background : playerPic : asteroidPics ++ saucerPics ++ bulletPics)
+        where
+            background   = Blank
+            playerPic    = render playerBMP (player s)
+            asteroidPics = map (render asteroidBMP) (asteroids s)
+            saucerPics   = map (render saucerBMP)   (saucers s)
+            bulletPics   = map (render bulletBMP)   (bullets s)
 renderSpace s _ = Blank -- go away non-exhaustive pattern match error
 
 class Render a where

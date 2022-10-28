@@ -3,7 +3,7 @@
 module Model where
 
 import Graphics.Gloss ( Point, Vector, Picture )
-import Graphics.Gloss.Data.Point.Arithmetic ( Point, (+) )
+import Graphics.Gloss.Data.Point.Arithmetic ( (+) )
 
 addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
@@ -29,7 +29,7 @@ initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,0) 100) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,1) 100) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

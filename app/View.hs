@@ -30,7 +30,7 @@ translateToPosition :: Point -> Picture -> Picture
 translateToPosition (x,y) = translate x y
 
 rotateToOrientation :: Vector -> Picture -> Picture
-rotateToOrientation v@(x,y) | x < 0 = Rotate $ - shift
+rotateToOrientation v@(x,_) | x < 0 = Rotate $ - shift
                             | otherwise = Rotate shift
                     where
                         shift = degrees $ angleVV v (0,1)

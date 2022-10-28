@@ -11,8 +11,8 @@ import Graphics.Gloss.Data.Vector
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
-step secs space | paused space == Paused = return space                              -- do nothing if paused
-                | otherwise              = return . updateTick . alterPlayer $ space -- first alter player based on movementkeys then update game
+step secs space | static space = return space                               -- do nothing if game is static
+                | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
 --   do randomNumber <- randomIO
 --      return $ GameState (ShowANumber (abs randomNumber `mod` 10)) 0
 
@@ -25,8 +25,8 @@ inputKey :: Event -> Space -> Space
 inputKey (EventKey (Char 'p') Down _ _) s -- pause/unpause when 'p' is pressed down
     = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
-    | paused s == Paused  = s               -- do nothing if game is paused
-    | otherwise           = case sk of 
+    | static s  = s                       -- do nothing if game is static
+    | otherwise = case sk of 
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
@@ -45,6 +45,10 @@ setArrowkey pos state s
     in 
         s {arrowkeysDown = x ++ y : ys}
 
+-- game is static if it is paused or game is over, meaning space won't change anymore
+static :: Space -> Bool
+static s = paused s == Paused || gameState s == GameOver
+
 -- flip paused state
 pause :: Space -> Space
 pause s | paused s == Paused = s {paused = Unpaused}
@@ -57,7 +61,7 @@ movePlayerForward :: Player -> Player
 movePlayerForward p = undefined
 
 rotateSpeed :: Float
-rotateSpeed = 0.01
+rotateSpeed = 0.05
 
 rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}

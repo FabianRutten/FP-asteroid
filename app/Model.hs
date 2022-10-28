@@ -26,7 +26,7 @@ playerDrag = 0
 
 --initials
 initialSpace :: Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Playing (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
 initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,0) 100) (0,1) 3 0
@@ -43,7 +43,7 @@ data Space = MkSpace { player        :: Player
 data Paused = Paused | Unpaused
     deriving (Eq, Show)
 
-data GameState = Playing | GameOver
+data GameState = Alive | GameOver
     deriving (Eq, Show)
 
 data Entity = MkEntity { size      :: Int
@@ -71,4 +71,4 @@ data Player = MkPlayer { ship        :: Entity
 radians :: Float -> Float --convert degrees to radians
 radians x = x / 180 * pi
 degrees :: Float -> Float --convert radians to degrees
-degrees x =  x / pi * 180
+degrees x = x / pi * 180

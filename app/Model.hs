@@ -13,7 +13,7 @@ screensize :: Int
 screensize = 800
 
 blackMargin :: Int
-blackMargin = 100
+blackMargin = 0
 
 floatBlackMargin :: Float
 floatBlackMargin = fromIntegral blackMargin
@@ -22,14 +22,18 @@ halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
 playerDrag :: Float
-playerDrag = 0
+playerDrag = 7 -- in percentile 0-100. 100 being higher drag
+playerThrust :: Float
+playerThrust = 5
+playerMaxSpeed :: Float
+playerMaxSpeed = 30
 
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,1) 100) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 1 (-200,0) (0,1) 2) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

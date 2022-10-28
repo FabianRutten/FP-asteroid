@@ -30,7 +30,7 @@ updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship 
                 updateShipPosition :: Entity -> Entity
                 updateShipPosition = updateEntityPosition
                 dragShip :: Entity -> Entity
-                dragShip s = s {speed = max 0 (speed s - playerDrag)}
+                dragShip s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid a = MkAst $ updateEntityPosition $ entityAsteroid a

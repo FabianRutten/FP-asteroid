@@ -26,7 +26,7 @@ inputKey (EventKey (Char 'p') Down _ _) s -- pause/unpause when 'p' is pressed d
     = pause s
 inputKey (EventKey (SpecialKey sk) state _ _) s
     | static s  = s                       -- do nothing if game is static
-    | otherwise = case sk of 
+    | otherwise = case sk of
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
@@ -38,11 +38,11 @@ inputKey _ s = s                          -- keep the same if no relevant key is
 
 -- change the bool in arrowkeysDown at a certain position based on the state of the key
 setArrowkey :: Int -> KeyState -> Space -> Space
-setArrowkey pos state s 
-  = let 
-        (x,_:ys) = splitAt pos (arrowkeysDown s) 
+setArrowkey pos state s
+  = let
+        (x,_:ys) = splitAt pos (arrowkeysDown s)
         y = state == Down
-    in 
+    in
         s {arrowkeysDown = x ++ y : ys}
 
 -- game is static if it is paused or game is over, meaning space won't change anymore
@@ -57,8 +57,8 @@ pause s | paused s == Paused = s {paused = Unpaused}
 shoot :: Space -> Space
 shoot s = undefined
 
-movePlayerForward :: Player -> Player
-movePlayerForward p = undefined
+thrustPlayer :: Player -> Player
+thrustPlayer p = p {ship = (ship p){speed = speed (ship p) + playerThrust}}
 
 rotateSpeed :: Float
 rotateSpeed = 0.05
@@ -76,10 +76,10 @@ escapeGame s = initialSpace
 alterPlayer :: Space -> Space
 alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                     p = player s
-                    playerLeft  | left      = rotatePlayer rotateSpeed p 
+                    playerLeft  | left      = rotatePlayer rotateSpeed p
                                 | otherwise = p
                     playerRight | right     = rotatePlayer (-rotateSpeed) playerLeft
                                 | otherwise = playerLeft
-                    playerFwd   | fwd       = movePlayerForward playerRight
+                    playerFwd   | fwd       = thrustPlayer playerRight
                                 | otherwise = playerRight
                 in s {player = playerFwd}

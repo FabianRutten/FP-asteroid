@@ -50,11 +50,11 @@ checkCollisions :: Space -> Space
 checkCollisions s = s
 
 checkPoint :: Point -> Point --screensize/2 + floatBlackMargin (dark place) as maximum point values. with negatives as well -> swap sides
-checkPoint new@(x,y) | x >  (halfscreen + floatBlackMargin)    = ((-halfscreen) -floatBlackMargin , y)
-                     | y >  (halfscreen + floatBlackMargin)    =  ((-halfscreen)-floatBlackMargin , x)
-                     | x <  ((-halfscreen) - floatBlackMargin) = (halfscreen+floatBlackMargin     , y)
-                     | y <  ((-halfscreen) - floatBlackMargin) = (halfscreen+floatBlackMargin     , x)
-                     | otherwise =  new
+checkPoint old@(x,y) | x >  (halfscreen + floatBlackMargin)    = ((-halfscreen) -floatBlackMargin, y)
+                     | y >  (halfscreen + floatBlackMargin)    = (x, (-halfscreen)-floatBlackMargin)
+                     | x <  ((-halfscreen) - floatBlackMargin) = (halfscreen+floatBlackMargin, y)
+                     | y <  ((-halfscreen) - floatBlackMargin) = (x, halfscreen+floatBlackMargin)
+                     | otherwise = old
 
 --first update position, simply with direction and speed. 
 --Then check if new position is outside of set bounderies of the play space and 

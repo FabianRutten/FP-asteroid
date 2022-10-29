@@ -26,7 +26,9 @@ playerDrag = 7 -- in percentile 0-100. 100 being higher drag
 playerThrust :: Float
 playerThrust = 5
 playerMaxSpeed :: Float
-playerMaxSpeed = 30
+playerMaxSpeed = 20
+bulletSpeed :: Float
+bulletSpeed = 30 -- always higher then player!
 
 rotateSpeed :: Float
 rotateSpeed = 0.05

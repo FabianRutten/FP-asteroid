@@ -30,8 +30,8 @@ inputKey (EventKey (SpecialKey sk) state _ _) s
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
-        KeySpace -> shoot s               -- shoot on space
-        KeyEsc   -> escapeGame state s          -- escape game on esc
+        KeySpace -> shootPlayer s         -- shoot on space
+        KeyEsc   -> escapeGame state s    -- escape game on esc
         _        -> s                     -- keep the same if no relevant special key is pressed
 inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
@@ -54,14 +54,28 @@ pause :: Space -> Space
 pause s | paused s == Paused = s {paused = Unpaused}
         | otherwise          = s {paused = Paused}
 
-shoot :: Space -> Space
-shoot s = undefined
+shootPlayer :: Space -> Space
+shootPlayer s = s {bullets = newBullet : bullets  s}
+      where
+          q = ship $ player s
+          startPoint = position q `addPoint` mulSV (size q) (direction q)
+          newBullet = MkBullet newProjectile True 0
+          newProjectile = MkEntity 1 startPoint (orientation $ player s) bulletSpeed
 
-thrustPlayer :: Player -> Player
-thrustPlayer p = p {ship = (ship p){speed = speed (ship p) + playerThrust}}
+thrustPlayer :: Player -> Player  --maybe needs to be percentile
+thrustPlayer p = p {ship = q {speed = speed q + playerThrust}}
+              where q = ship p
 
-rotateSpeed :: Float
-rotateSpeed = 0.05
+
+fwdPlayer :: Player -> Player
+fwdPlayer = thrustPlayer . changeDirectionPlayer
+
+changeDirectionPlayer :: Player -> Player
+changeDirectionPlayer p = p {ship = q {direction = normalizeV $ scaleWithSpeed (direction q) `addPoint` orientation p }}
+            where
+              q = ship p
+              scaleWithSpeed = mulSV $ speed q
+
 
 rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
@@ -81,6 +95,6 @@ alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                                 | otherwise = p
                     playerRight | right     = rotatePlayer (-rotateSpeed) playerLeft
                                 | otherwise = playerLeft
-                    playerFwd   | fwd       = thrustPlayer playerRight
+                    playerFwd   | fwd       = fwdPlayer playerRight
                                 | otherwise = playerRight
                 in s {player = playerFwd}

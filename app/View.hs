@@ -78,4 +78,6 @@ instance Render Saucer where
 
 instance Render Bullet where
     render :: Picture -> Bullet -> Picture
-    render bmp b = undefined
+    render bmp b =  translateToPosition (position entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+        where
+            entity = projectile b

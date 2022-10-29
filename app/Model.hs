@@ -28,6 +28,9 @@ playerThrust = 5
 playerMaxSpeed :: Float
 playerMaxSpeed = 30
 
+rotateSpeed :: Float
+rotateSpeed = 0.05
+
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)

@@ -57,11 +57,22 @@ pause s | paused s == Paused = s {paused = Unpaused}
 shoot :: Space -> Space
 shoot s = undefined
 
-thrustPlayer :: Player -> Player
-thrustPlayer p = p {ship = (ship p){speed = speed (ship p) + playerThrust}}
 
-rotateSpeed :: Float
-rotateSpeed = 0.05
+
+thrustPlayer :: Player -> Player
+thrustPlayer p = p {ship = q {speed = speed q + playerThrust}}
+              where q = ship p
+
+            
+fwdPlayer :: Player -> Player
+fwdPlayer = thrustPlayer . changeDirectionPlayer
+
+changeDirectionPlayer :: Player -> Player
+changeDirectionPlayer p = p {ship = q {direction = normalizeV $ scaleWithSpeed (direction q) `addPoint` orientation p }}
+            where 
+              q = ship p
+              scaleWithSpeed = mulSV $ speed q
+
 
 rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
@@ -80,6 +91,6 @@ alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                                 | otherwise = p
                     playerRight | right     = rotatePlayer (-rotateSpeed) playerLeft
                                 | otherwise = playerLeft
-                    playerFwd   | fwd       = thrustPlayer playerRight
+                    playerFwd   | fwd       = fwdPlayer playerRight
                                 | otherwise = playerRight
                 in s {player = playerFwd}

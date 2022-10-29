@@ -50,11 +50,12 @@ renderSpace :: Space -> [Picture] -> Picture
 renderSpace s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP] 
     = pictures (background : playerPic : asteroidPics ++ saucerPics ++ bulletPics)
         where
-            background   = Blank
-            playerPic    = render playerBMP (player s)
-            asteroidPics = map (render asteroidBMP) (asteroids s)
-            saucerPics   = map (render saucerBMP)   (saucers s)
-            bulletPics   = map (render bulletBMP)   (bullets s)
+            background   = backgroundBMP
+            playerPic    = render    playerBMP   (player s)
+            asteroidPics = mapRender asteroidBMP (asteroids s)
+            saucerPics   = mapRender saucerBMP   (saucers s)
+            bulletPics   = mapRender bulletBMP   (bullets s)
+            mapRender bmp = map (render bmp)
 renderSpace s _ = Blank -- go away non-exhaustive pattern match error
 
 class Render a where

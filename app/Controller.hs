@@ -31,7 +31,7 @@ inputKey (EventKey (SpecialKey sk) state _ _) s
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
         KeySpace -> shoot s               -- shoot on space
-        KeyEsc   -> escapeGame s          -- escape game on esc
+        KeyEsc   -> escapeGame state s          -- escape game on esc
         _        -> s                     -- keep the same if no relevant special key is pressed
 inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
@@ -67,8 +67,9 @@ rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
 
 -- for now return to initalSpace, reset game
-escapeGame :: Space -> Space
-escapeGame s = initialSpace
+escapeGame :: KeyState -> Space -> Space
+escapeGame state s | state == Down = initialSpace
+                   | otherwise     = s
 
 -- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
 -- possible to hold multiple keys at the same time

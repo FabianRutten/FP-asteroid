@@ -30,8 +30,8 @@ inputKey (EventKey (SpecialKey sk) state _ _) s
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
-        KeySpace -> shootPlayer s         -- shoot on space
-        KeyEsc   -> escapeGame state s    -- escape game on esc
+        KeySpace -> shootPlayer   state s -- shoot on space
+        KeyEsc   -> escapeGame    state s -- escape game on esc
         _        -> s                     -- keep the same if no relevant special key is pressed
 inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
@@ -54,8 +54,9 @@ pause :: Space -> Space
 pause s | paused s == Paused = s {paused = Unpaused}
         | otherwise          = s {paused = Paused}
 
-shootPlayer :: Space -> Space
-shootPlayer s = s {bullets = newBullet : bullets  s}
+shootPlayer :: KeyState -> Space -> Space
+shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
+                    | otherwise     = s
       where
           q = ship $ player s
           startPoint = position q `addPoint` mulSV (size q) (direction q)

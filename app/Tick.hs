@@ -5,17 +5,27 @@ import Data.Data (Data)
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
 
+import System.Random
+
 
 
 updateTick :: Space -> Space
 updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
 
 updateAsteroids :: Space -> Space
-updateAsteroids s | score (player s) == 0 = spawnNew
-                  | score (player s) `elem` nextWaveScores = spawnNew
+updateAsteroids s | score (player s) == 0 && null (asteroids s) = s {asteroids = spawnNew}
+                  | score (player s) `elem` nextWaveScores = s {asteroids = spawnNew}
                   | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
                 where
-                    spawnNew = undefined
+                    spawnNew = replicate numberInWave spawnAsteroid
+
+spawnAsteroid :: Asteroid
+spawnAsteroid = MkAst $ MkEntity sizeBig pickPoint pickDirection speedBig
+           where
+            xOry = True --for now, needs to be random
+            pickPoint | xOry = (0,0)
+                      | otherwise = (400,400)
+            pickDirection = (1,4)
 
 updateBullets :: Space -> Space
 updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets s}

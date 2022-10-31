@@ -70,7 +70,9 @@ instance Render Player where
 
 instance Render Asteroid where
     render :: Picture -> Asteroid -> Picture
-    render bmp a = undefined
+    render bmp a = translateToPosition (position entity) $ rotateToOrientation (direction entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+         where
+            entity = entityAsteroid a
 
 instance Render Saucer where
     render :: Picture -> Saucer -> Picture

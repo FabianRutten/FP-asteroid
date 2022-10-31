@@ -33,8 +33,15 @@ bulletSpeed = 30 -- always higher then player!
 rotateSpeed :: Float
 rotateSpeed = 0.05
 
+--asteroid
 nextWaveScores :: [Int]
 nextWaveScores = [100,200]
+sizeBig :: Float
+sizeBig = 3
+speedBig :: Float
+speedBig = 10
+numberInWave :: Int
+numberInWave = 5
 
 --initials
 initialSpace :: Space

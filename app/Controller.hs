@@ -58,10 +58,11 @@ shootPlayer :: KeyState -> Space -> Space
 shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
                     | otherwise     = s
       where
-          q = ship $ player s
+          p = player s
+          q = ship p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity 1 startPoint (orientation $ player s) bulletSpeed
+          newProjectile = MkEntity 1 startPoint (orientation p) bulletSpeed
 
 thrustPlayer :: Player -> Player  --maybe needs to be percentile
 thrustPlayer p = p {ship = q {speed = speed q + playerThrust}}

@@ -10,12 +10,12 @@ import Model
 -- load all bitmaps and call pure function
 view :: Space -> IO Picture
 view s = do
-    backgroundBMP <- loadBMP "ship.bmp"
-    playerBMP     <- loadBMP "ship.bmp"
-    asteroidBMP   <- loadBMP "ship.bmp"
-    saucerBMP     <- loadBMP "ship.bmp"
-    bulletBMP     <- loadBMP "ship.bmp"
-    return $ viewPure s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP]
+    backgroundBMP <- loadBMP "bitmaps/background.bmp"
+    bulletBMP     <- loadBMP "bitmaps/bullet.bmp"
+    asteroidBMP   <- loadBMP "bitmaps/ship.bmp"
+    saucerBMP     <- loadBMP "bitmaps/ship.bmp"
+    playerBMP     <- loadBMP "bitmaps/ship.bmp"
+    return $ viewPure s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
 
 -- choose correct view function based on the state of the game
 viewPure :: Space -> [Picture] -> Picture
@@ -47,14 +47,14 @@ scaleUniform s = scale s s
 
 -- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
 renderSpace :: Space -> [Picture] -> Picture
-renderSpace s [backgroundBMP, playerBMP, asteroidBMP, saucerBMP, bulletBMP] 
-    = pictures (background : playerPic : asteroidPics ++ saucerPics ++ bulletPics)
+renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
+    = pictures (background : bulletPics ++ asteroidPics ++ saucerPics ++ [playerPic])
         where
             background   = backgroundBMP
             playerPic    = render    playerBMP   (player s)
+            bulletPics   = mapRender bulletBMP   (bullets s)
             asteroidPics = mapRender asteroidBMP (asteroids s)
             saucerPics   = mapRender saucerBMP   (saucers s)
-            bulletPics   = mapRender bulletBMP   (bullets s)
             mapRender bmp = map (render bmp)
 renderSpace s _ = Blank -- go away non-exhaustive pattern match error
 
@@ -78,6 +78,6 @@ instance Render Saucer where
 
 instance Render Bullet where
     render :: Picture -> Bullet -> Picture
-    render bmp b =  translateToPosition (position entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+    render bmp b =  translateToPosition (position entity) $ rotateToOrientation (direction entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
         where
             entity = projectile b

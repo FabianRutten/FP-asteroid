@@ -11,15 +11,19 @@ updateTick :: Space -> Space
 updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
 
 updateAsteroids :: Space -> Space
-updateAsteroids s = s {asteroids = map updateAsteroid $ asteroids s}
+updateAsteroids s | score (player s) == 0 = spawnNew
+--                | 
+                  | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
+                where
+                    spawnNew = undefined
 
 updateBullets :: Space -> Space
 updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets s}
-                where 
+                where
                     checkBulletsDistance :: [Bullet] -> [Bullet]
                     checkBulletsDistance = filter (\x -> distance x < halfscreen)
 
-                    
+
 updateSaucers :: Space -> Space
 updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 

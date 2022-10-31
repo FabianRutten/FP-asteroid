@@ -33,6 +33,9 @@ bulletSpeed = 30 -- always higher then player!
 rotateSpeed :: Float
 rotateSpeed = 0.05
 
+nextWaveScores :: [Int]
+nextWaveScores = [100,200]
+
 --initials
 initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)

@@ -12,7 +12,7 @@ updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . ch
 
 updateAsteroids :: Space -> Space
 updateAsteroids s | score (player s) == 0 = spawnNew
---                | 
+                  | score (player s) `elem` nextWaveScores = spawnNew
                   | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
                 where
                     spawnNew = undefined

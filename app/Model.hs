@@ -69,8 +69,6 @@ data Bullet = MkBullet { projectile :: Entity
                        , distance   :: Float
                        }
 
-
-
 data Player = MkPlayer { ship        :: Entity
                        , orientation :: Vector
                        , lives       :: Int

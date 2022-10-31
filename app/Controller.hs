@@ -30,8 +30,8 @@ inputKey (EventKey (SpecialKey sk) state _ _) s
         KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
-        KeySpace -> shootPlayer s               -- shoot on space
-        KeyEsc   -> escapeGame s          -- escape game on esc
+        KeySpace -> shootPlayer   state s -- shoot on space
+        KeyEsc   -> escapeGame    state s -- escape game on esc
         _        -> s                     -- keep the same if no relevant special key is pressed
 inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
@@ -54,13 +54,15 @@ pause :: Space -> Space
 pause s | paused s == Paused = s {paused = Unpaused}
         | otherwise          = s {paused = Paused}
 
-shootPlayer :: Space -> Space
-shootPlayer s = s {bullets = newBullet : bullets  s}
+shootPlayer :: KeyState -> Space -> Space
+shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
+                    | otherwise     = s
       where
-          q = ship $ player s
+          p = player s
+          q = ship p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity 1 startPoint (orientation $ player s) bulletSpeed
+          newProjectile = MkEntity 1 startPoint (orientation p) bulletSpeed
 
 thrustPlayer :: Player -> Player  --maybe needs to be percentile
 thrustPlayer p = p {ship = q {speed = speed q + playerThrust}}
@@ -81,8 +83,9 @@ rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
 
 -- for now return to initalSpace, reset game
-escapeGame :: Space -> Space
-escapeGame s = initialSpace
+escapeGame :: KeyState -> Space -> Space
+escapeGame state s | state == Down = initialSpace
+                   | otherwise     = s
 
 -- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
 -- possible to hold multiple keys at the same time

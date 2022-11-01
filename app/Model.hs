@@ -39,9 +39,9 @@ nextWaveScores = [100,200]
 sizeBig :: Float
 sizeBig = 3
 speedBig :: Float
-speedBig = 10
+speedBig = 3
 numberInWave :: Int
-numberInWave = 5
+numberInWave = 1
 
 --initials
 initialSpace :: Space

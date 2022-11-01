@@ -61,6 +61,10 @@ renderSpace s _ = Blank -- go away non-exhaustive pattern match error
 class Render a where
     render :: Picture -> a -> Picture
 
+instance Render Entity where
+    render :: Picture -> Entity -> Picture
+    render bmp e = translateToPosition (position e) $ rotateToOrientation (direction e) $ scaleUniform (size e) bmp
+
 -- All instances to turn one of the attributes of the space into a picture
 instance Render Player where
     render :: Picture -> Player -> Picture
@@ -70,16 +74,18 @@ instance Render Player where
 
 instance Render Asteroid where
     render :: Picture -> Asteroid -> Picture
-    render bmp a = translateToPosition (position entity) $ rotateToOrientation (direction entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+    render bmp a = render (pictures [bmp, color red $ text (show (position entity))]) entity
          where
             entity = entityAsteroid a
 
 instance Render Saucer where
     render :: Picture -> Saucer -> Picture
-    render bmp s = undefined
+    render bmp s = render (pictures [bmp, color red $ text (show (position entity))]) entity
+         where
+            entity = entitySaucer s
 
 instance Render Bullet where
     render :: Picture -> Bullet -> Picture
-    render bmp b =  translateToPosition (position entity) $ rotateToOrientation (direction entity) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (position entity))])
+    render bmp b =  render (pictures [bmp, color red $ text (show (position entity))]) entity
         where
             entity = projectile b

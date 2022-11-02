@@ -60,8 +60,6 @@ updateBullet = updateBulletPosition . updateBulletDistance
 updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
 
-checkCollisions :: Space -> Space
-checkCollisions s = s
 
 checkPoint :: Point -> Point --screensize/2 + floatBlackMargin (dark place) as maximum point values. with negatives as well -> swap sides
 checkPoint old@(x,y) | x >  (halfscreen + floatBlackMargin)    = ((-halfscreen) -floatBlackMargin, y)
@@ -77,3 +75,12 @@ updateEntityPosition a = a{ position = checkPoint (movePoint a)}
                 where
                     movePoint :: Entity -> Point
                     movePoint a = mulSV (speed a) (direction a) `addPoint` position a
+
+                    
+checkCollisions :: Space -> Space
+checkCollisions s = s
+
+asteroidsWithPlayer :: Space -> Space
+asteroidsWithPlayer s = s
+
+

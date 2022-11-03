@@ -97,7 +97,7 @@ asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
 bulletsWithAsteroids :: Space -> Space
 bulletsWithAsteroids s = let ((as,bs),matches) = asteroidHits (bullets s) (asteroids s)
                          in
-                         setAsteroids as $ setBullets bs $ setScore getScore s
+                         setAsteroids as $ setBullets bs $ setScore (getScore matches) s
                    where
                     setAsteroids :: [Asteroid] -> Space -> Space
                     setAsteroids a s = s {asteroids = a}
@@ -105,8 +105,10 @@ bulletsWithAsteroids s = let ((as,bs),matches) = asteroidHits (bullets s) (aster
                     setBullets b s   = s {bullets = b}
                     setScore :: Int -> Space -> Space
                     setScore score s = s {player = (player s){score = score}}
-                    getScore :: Int
-                    getScore = undefined
+                    getScore :: [(Bullet, Asteroid)] -> Int
+                    getScore [] = 0
+                    getScore (x@(b,a):xs) | fromPlayer b = asteroidScore (size $ entityAsteroid a) + getScore xs
+                                          | otherwise = getScore xs
 
 asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
 --(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit matches, there is ALWAYS one bullet and one possible asteroid])
@@ -135,7 +137,7 @@ createCombos a b = (,) <$> a <*> b
 
 
 checkHit :: Entity -> Entity -> Bool
-checkHit x y = True
+checkHit x y = False
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

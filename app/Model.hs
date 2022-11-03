@@ -13,7 +13,7 @@ screensize :: Int
 screensize = 800
 
 blackMargin :: Int
-blackMargin = 0
+blackMargin = 100
 
 floatBlackMargin :: Float
 floatBlackMargin = fromIntegral blackMargin

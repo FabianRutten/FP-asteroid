@@ -27,8 +27,11 @@ playerThrust :: Float
 playerThrust = 5
 playerMaxSpeed :: Float
 playerMaxSpeed = 20
+
 bulletSpeed :: Float
 bulletSpeed = 30 -- always higher then player!
+bulletRadius :: Float
+bulletRadius = 2
 
 rotateSpeed :: Float
 rotateSpeed = 0.05
@@ -73,7 +76,7 @@ initialSpace :: Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 0.5 (-200,0) (0,1) 2) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 0.5 (-200,0) (0,1) 2 playerRadius) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -94,6 +97,7 @@ data Entity = MkEntity { size      :: Float
                        , position  :: Point
                        , direction :: Vector 
                        , speed     :: Float --pixels p/tick (30/s)
+                       , radius    :: Float
                        }
 
 newtype Saucer = MkSaucer { entitySaucer :: Entity}
@@ -114,3 +118,4 @@ radians :: Float -> Float --convert degrees to radians
 radians x = x / 180 * pi
 degrees :: Float -> Float --convert radians to degrees
 degrees x = x / pi * 180
+

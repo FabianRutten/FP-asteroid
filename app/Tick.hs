@@ -22,7 +22,7 @@ updateAsteroids s | score (player s) == 0 && null (asteroids s) = s {asteroids =
                     spawnNew = replicate numberInWave spawnAsteroid
 
 spawnAsteroid :: Asteroid
-spawnAsteroid = MkAst $ MkEntity sizeBig pickPoint pickDirection speedBig
+spawnAsteroid = MkAst $ MkEntity sizeBig pickPoint pickDirection speedBig $ asteroidRadius sizeBig
            where
             xOry = True --for now, needs to be random
             pickPoint | xOry = (0,0)
@@ -110,18 +110,20 @@ bulletsWithAsteroids s = let ((as,bs),matches) = asteroidHits (bullets s) (aster
                     getScore (x@(b,a):xs) | fromPlayer b = asteroidScore (size $ entityAsteroid a) + getScore xs
                                           | otherwise = getScore xs
 
-asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
+                    asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
 --(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit matches, there is ALWAYS one bullet and one possible asteroid])
-asteroidHits bs as = recur bs as (([],[]),[])
-                        where
-                recur :: [Bullet] -> [Asteroid]
+                    asteroidHits bs as = recur bs as (([],[]),[])
+                            where
+                        recur :: [Bullet] -> [Asteroid]
                                   -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
                                   -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
-                recur [] as ((a1,b1),match) = ((as++a1,b1),match)
-                recur bs [] ((a1,b1),match) = ((a1,bs++b1),match)
-                recur (b:bs) (a:as) ((a1,b1),match)
-                        | checkHit (projectile b) (entityAsteroid a) = recur bs as ((a1,b1), (b,a):match)
-                        | otherwise = recur bs as ((a:a1,b:b1),match)
+                        recur [] as ((a1,b1),match) = ((as++a1,b1),match)
+                        recur bs [] ((a1,b1),match) = ((a1,bs++b1),match)
+                        recur (b:bs) (a:as) ((a1,b1),match)
+                               | checkHit (projectile b) (entityAsteroid a) = recur bs as ((a1,b1), (b,a):match)
+                               | otherwise = recur bs as ((a:a1,b:b1),match)
+
+
 
 
 
@@ -137,7 +139,7 @@ createCombos a b = (,) <$> a <*> b
 
 
 checkHit :: Entity -> Entity -> Bool
-checkHit x y = False
+checkHit x y = undefined
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

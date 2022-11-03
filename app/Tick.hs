@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use tuple-section" #-}
 module Tick where
 
 import Model
@@ -76,11 +78,50 @@ updateEntityPosition a = a{ position = checkPoint (movePoint a)}
                     movePoint :: Entity -> Point
                     movePoint a = mulSV (speed a) (direction a) `addPoint` position a
 
-                    
+
 checkCollisions :: Space -> Space
-checkCollisions s = s
+checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
 
-asteroidsWithPlayer :: Space -> Space
-asteroidsWithPlayer s = s
+asteroidsCollisionsWithPlayer :: Space -> Space
+asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
+                                          then s {player = (player s){score = score (player s) - 1}}
+                                          else gameOver s
+                                | otherwise = s
+                    where
+                        isHit             :: Bool
+                        isHit                 = any (\a -> asteroidHitPlayer a $ player s) $ asteroids s
+                        asteroidHitPlayer :: Asteroid -> Player -> Bool
+                        asteroidHitPlayer a p = checkHit (entityAsteroid a) $ ship p
 
 
+bulletsWithAsteroids :: Space -> Space
+{--bulletsWithAsteroids s = s {bullets = filter (null . bulletHitAsteroids (asteroids s)) $ bullets s }
+                   where
+                    bulletHitAsteroids :: [Asteroid] -> Bullet -> [Asteroid]
+                    bulletHitAsteroids a b = filter (checkHit (projectile b) . entityAsteroid) a --}
+bulletsWithAsteroids s = s
+                   where
+                    setAsteroids :: Space -> [Asteroid] -> Space
+                    setAsteroids s a = s{asteroids = a}
+                    setBullets :: Space -> [Bullet] -> Space
+                    setBullets s b   = s{bullets = b}
+                    createTuples :: [Asteroid] -> [Bullet] -> [(Bullet,[Asteroid])]
+                    createTuples a b = map (\x-> (x,a)) b
+
+                    
+
+
+
+headm :: [a] -> Maybe a --https://stackoverflow.com/questions/54015516/get-first-element-of-list-as-maybe-vs-maybe-elements
+headm []     = Nothing
+headm (x:xs) = Just x
+
+createCombos :: [a] -> [b] -> [(a,b)] --not sure if needed anymore
+createCombos a b = (,) <$> a <*> b
+
+
+checkHit :: Entity -> Entity -> Bool
+checkHit x y = True
+
+gameOver :: Space -> Space
+gameOver s = s{gameState = GameOver}

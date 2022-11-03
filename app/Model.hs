@@ -36,12 +36,37 @@ rotateSpeed = 0.05
 --asteroid
 nextWaveScores :: [Int]
 nextWaveScores = [100,200]
+    --Sizes
 sizeBig :: Float
 sizeBig = 3
+sizeMedium :: Float
+sizeMedium = 2
+sizeSmall :: Float
+sizeSmall = 1
+    --speeds
 speedBig :: Float
 speedBig = 3
+
+
 numberInWave :: Int
 numberInWave = 1
+
+    --hitboxes
+playerRadius :: Float
+playerRadius = 10
+
+    --hitboxes
+asteroidRadius :: Float -> Float
+asteroidRadius size | size == sizeBig = 30
+                    | size == sizeMedium = 20
+                    | size == sizeSmall = 10
+                    | otherwise = 0 --pattern matchin (could in theory not be hit, but just to be sure
+    --scores
+asteroidScore :: Float -> Int
+asteroidScore size | size == sizeBig = 100
+                   | size == sizeMedium = 70
+                   | size == sizeSmall = 30
+                   | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
 
 --initials
 initialSpace :: Space

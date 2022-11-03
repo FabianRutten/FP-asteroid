@@ -31,7 +31,7 @@ playerMaxSpeed = 20
 bulletSpeed :: Float
 bulletSpeed = 30 -- always higher then player!
 bulletRadius :: Float
-bulletRadius = 2
+bulletRadius = 30
 
 rotateSpeed :: Float
 rotateSpeed = 0.05

@@ -139,7 +139,13 @@ createCombos a b = (,) <$> a <*> b
 
 
 checkHit :: Entity -> Entity -> Bool
-checkHit x y = undefined
+checkHit a b = distance2P (position a) (position b) <= (radius a + radius b)
+
+distance2P :: Point -> Point -> Float
+distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
+    where
+      x' = x1 - x2
+      y' = y1 - y2
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

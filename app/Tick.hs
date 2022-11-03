@@ -95,28 +95,35 @@ asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
 
 
 bulletsWithAsteroids :: Space -> Space
-{--bulletsWithAsteroids s = s {bullets = filter (null . bulletHitAsteroids (asteroids s)) $ bullets s }
-                   where
-                    bulletHitAsteroids :: [Asteroid] -> Bullet -> [Asteroid]
-                    bulletHitAsteroids a b = filter (checkHit (projectile b) . entityAsteroid) a --}
 bulletsWithAsteroids s = s
                    where
-                    setAsteroids :: Space -> [Asteroid] -> Space
-                    setAsteroids s a = s{asteroids = a}
-                    setBullets :: Space -> [Bullet] -> Space
-                    setBullets s b   = s{bullets = b}
-                    createTuples :: [Asteroid] -> [Bullet] -> [(Bullet,[Asteroid])]
-                    createTuples a b = map (\x-> (x,a)) b
+                    setAsteroids s a = s {asteroids = a}
+                    setBullets   :: Space -> [Bullet] -> Space
+                    setBullets s b   = s {bullets = b}
 
-                    
+asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)]) 
+--(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit matches, there is ALWAYS one bullet and one possible asteroid])
+asteroidHits bs as = recur bs as (([],[]),[])
+                        where
+                recur :: [Bullet] -> [Asteroid] 
+                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)]) 
+                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
+                recur [] as ((a1,b1),match) = ((as++a1,b1),match)
+                recur bs [] ((a1,b1),match) = ((a1,bs++b1),match)
+                recur (b:bs) (a:as) ((a1,b1),match) 
+                        | checkHit (projectile b) (entityAsteroid a) = recur bs as ((a1,b1), (b,a):match)
+                        | otherwise = recur bs as ((a:a1,b:b1),match)
 
 
 
+
+--not sure if needed anymore
 headm :: [a] -> Maybe a --https://stackoverflow.com/questions/54015516/get-first-element-of-list-as-maybe-vs-maybe-elements
 headm []     = Nothing
 headm (x:xs) = Just x
 
-createCombos :: [a] -> [b] -> [(a,b)] --not sure if needed anymore
+--not sure if needed anymore
+createCombos :: [a] -> [b] -> [(a,b)] 
 createCombos a b = (,) <$> a <*> b
 
 

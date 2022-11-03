@@ -95,22 +95,29 @@ asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
 
 
 bulletsWithAsteroids :: Space -> Space
-bulletsWithAsteroids s = s
+bulletsWithAsteroids s = let ((as,bs),matches) = asteroidHits (bullets s) (asteroids s)
+                         in
+                         setAsteroids as $ setBullets bs $ setScore getScore s
                    where
-                    setAsteroids s a = s {asteroids = a}
-                    setBullets   :: Space -> [Bullet] -> Space
-                    setBullets s b   = s {bullets = b}
+                    setAsteroids :: [Asteroid] -> Space -> Space
+                    setAsteroids a s = s {asteroids = a}
+                    setBullets   ::  [Bullet] -> Space -> Space
+                    setBullets b s   = s {bullets = b}
+                    setScore :: Int -> Space -> Space
+                    setScore score s = s {player = (player s){score = score}}
+                    getScore :: Int
+                    getScore = undefined
 
-asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)]) 
+asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
 --(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit matches, there is ALWAYS one bullet and one possible asteroid])
 asteroidHits bs as = recur bs as (([],[]),[])
                         where
-                recur :: [Bullet] -> [Asteroid] 
-                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)]) 
+                recur :: [Bullet] -> [Asteroid]
+                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
                                   -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
                 recur [] as ((a1,b1),match) = ((as++a1,b1),match)
                 recur bs [] ((a1,b1),match) = ((a1,bs++b1),match)
-                recur (b:bs) (a:as) ((a1,b1),match) 
+                recur (b:bs) (a:as) ((a1,b1),match)
                         | checkHit (projectile b) (entityAsteroid a) = recur bs as ((a1,b1), (b,a):match)
                         | otherwise = recur bs as ((a:a1,b:b1),match)
 
@@ -123,7 +130,7 @@ headm []     = Nothing
 headm (x:xs) = Just x
 
 --not sure if needed anymore
-createCombos :: [a] -> [b] -> [(a,b)] 
+createCombos :: [a] -> [b] -> [(a,b)]
 createCombos a b = (,) <$> a <*> b
 
 

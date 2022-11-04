@@ -9,37 +9,42 @@ addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
 
 --application wide constants
+
+--screen
 screensize :: Int
 screensize = 800
-
-blackMargin :: Int
-blackMargin = 100
-
-floatBlackMargin :: Float
-floatBlackMargin = fromIntegral blackMargin
 
 halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
+blackMargin :: Float
+blackMargin = 50
+
+
+--player
 playerDrag :: Float
 playerDrag = 7 -- in percentile 0-100. 100 being higher drag
+
 playerThrust :: Float
 playerThrust = 2
-playerMaxSpeed :: Float
-playerMaxSpeed = 20
-
-bulletSpeed :: Float
-bulletSpeed = 30 -- always higher then player!
-bulletRadius :: Float
-bulletRadius = 30
 
 playerRotateSpeed :: Float
 playerRotateSpeed = 0.09
 
+playerMaxSpeed :: Float
+playerMaxSpeed = 20
+
+
+--bullet
+bulletSpeed :: Float
+bulletSpeed = playerMaxSpeed * 1.5 -- always higher then player!
+
+
 --asteroid
-nextWaveScores :: [Int]
-nextWaveScores = [100,200]
-    --Sizes
+numberInWave :: Int
+numberInWave = 1
+
+    --sizes
 sizeBig :: Float
 sizeBig = 1.5
 sizeMedium :: Float
@@ -55,32 +60,35 @@ speedSmall :: Float
 speedSmall = 2
 
 
-numberInWave :: Int
-numberInWave = 1
-
-    --hitboxes
-playerBitmapSize :: Float -- size of bitmap in pixels
+--bitmap sizes in pixels, window is 800 by 800 pixels by default for reference
+playerBitmapSize :: Float
 playerBitmapSize = 80
 
+asteroidBitmapSize :: Float
+asteroidBitmapSize = 90
+
+bulletBitmapSize :: Float
+bulletBitmapSize = 10
+
+
+-- hitboxes for every entity are circles with radius relative to the bitmap size and the size of the entity in game, 
 playerRadius :: Float
 playerRadius = (playerBitmapSize - (playerBitmapSize / 5)) / 2
 
-    --hitboxes
-asteroidBitmapSize :: Float -- size of bitmap in pixels
-asteroidBitmapSize = 90
-
 asteroidRadius :: Float -> Float
 asteroidRadius size = asteroidBitmapSize / 2 * size
-    --scores
-asteroidScore :: Asteroid -> Int
-asteroidScore a = round $ 20.0 * size (entityAsteroid a)
 
--- asteroidScore a | getSize == sizeBig = 100
---                 | getSize == sizeMedium = 70
---                 | getSize == sizeSmall = 30
---                 | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
---                 where
---                     getSize = size . entityAsteroid $ a
+bulletRadius :: Float
+bulletRadius = bulletBitmapSize / 2
+
+
+--scores
+asteroidScore :: Asteroid -> Int
+asteroidScore a = round $ 50 * size (entityAsteroid a)
+
+saucersScore :: Saucer -> Int
+saucersScore s = 200
+
 
 --initials
 initialSpace :: Space
@@ -111,22 +119,16 @@ data Entity = MkEntity { size      :: Float
                        , radius    :: Float
                        }
 
-newtype Saucer = MkSaucer { entitySaucer :: Entity}
-newtype Asteroid = MkAst { entityAsteroid :: Entity}
+newtype Saucer   = MkSaucer { entitySaucer   :: Entity}
+newtype Asteroid = MkAst    { entityAsteroid :: Entity}
 
 data Bullet = MkBullet { entityBullet :: Entity
-                       , fromPlayer :: Bool
-                       , distance   :: Float
+                       , fromPlayer   :: Bool
+                       , distance     :: Float
                        }
 
-data Player = MkPlayer { entityPlayer        :: Entity
-                       , orientation :: Vector
-                       , lives       :: Int
-                       , score       :: Int
+data Player = MkPlayer { entityPlayer :: Entity
+                       , orientation  :: Vector
+                       , lives        :: Int
+                       , score        :: Int
                        }
-
-radians :: Float -> Float --convert degrees to radians
-radians x = x / 180 * pi
-degrees :: Float -> Float --convert radians to degrees
-degrees x = x / pi * 180
-

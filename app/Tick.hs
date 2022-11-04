@@ -64,11 +64,11 @@ updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
 
 
-checkPoint :: Point -> Point --screensize/2 + floatBlackMargin (dark place) as maximum point values. with negatives as well -> swap sides
-checkPoint old@(x,y) | x >  (halfscreen + floatBlackMargin)    = ((-halfscreen) -floatBlackMargin, y)
-                     | y >  (halfscreen + floatBlackMargin)    = (x, (-halfscreen)-floatBlackMargin)
-                     | x <  ((-halfscreen) - floatBlackMargin) = (halfscreen+floatBlackMargin, y)
-                     | y <  ((-halfscreen) - floatBlackMargin) = (x, halfscreen+floatBlackMargin)
+checkPoint :: Point -> Point --screensize/2 + blackMargin (dark place) as maximum point values. with negatives as well -> swap sides
+checkPoint old@(x,y) | x >  (halfscreen + blackMargin)    = ((-halfscreen) -blackMargin, y)
+                     | y >  (halfscreen + blackMargin)    = (x, (-halfscreen)-blackMargin)
+                     | x <  ((-halfscreen) - blackMargin) = (halfscreen+blackMargin, y)
+                     | y <  ((-halfscreen) - blackMargin) = (x, halfscreen+blackMargin)
                      | otherwise = old
 
 --first update position, simply with direction and speed. 

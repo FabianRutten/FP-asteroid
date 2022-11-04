@@ -79,7 +79,7 @@ rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation 
 
 -- for now return to initalSpace, reset game
 escapeGame :: Space -> Space
-escapeGame s = initialSpace
+escapeGame s = initialSpace $ randomSeed s
 
 -- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
 -- possible to hold multiple keys at the same time

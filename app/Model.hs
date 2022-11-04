@@ -2,8 +2,10 @@
 --   which represent the state of the game
 module Model where
 
+import System.Random
 import Graphics.Gloss ( Point, Vector, Picture )
 import Graphics.Gloss.Data.Point.Arithmetic ( (+) )
+import System.Random.Stateful (STGen)
 
 addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
@@ -83,7 +85,7 @@ asteroidScore a = round $ 20.0 * size (entityAsteroid a)
 --                     getSize = size . entityAsteroid $ a
 
 --initials
-initialSpace :: Space
+initialSpace :: StdGen -> Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
 
 initialPlayer :: Player
@@ -96,6 +98,7 @@ data Space = MkSpace { player        :: Player
                      , paused        :: Paused
                      , gameState     :: GameState
                      , arrowkeysDown :: [Bool]
+                     , randomSeed    :: StdGen
                      }
 
 data Paused = Paused | Unpaused
@@ -106,7 +109,7 @@ data GameState = Alive | GameOver
 
 data Entity = MkEntity { size      :: Float
                        , position  :: Point
-                       , direction :: Vector 
+                       , direction :: Vector
                        , speed     :: Float --pixels p/tick (30/s)
                        , radius    :: Float
                        }

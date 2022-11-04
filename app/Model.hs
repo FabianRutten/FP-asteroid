@@ -23,7 +23,7 @@ blackMargin = 50
 
 --player
 playerDrag :: Float
-playerDrag = 7 -- in percentile 0-100. 100 being higher drag
+playerDrag = 0.07 -- 7%
 
 playerThrust :: Float
 playerThrust = 2

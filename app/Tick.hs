@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use tuple-section" #-}
+{-# LANGUAGE InstanceSigs #-}
 module Tick where
 
 import Model
@@ -11,15 +12,8 @@ import Graphics.Gloss.Data.Vector
 import System.Random
 
 
-
 updateTick :: Space -> Space
-updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
-
-updateAsteroids :: Space -> Space
-updateAsteroids s | null (asteroids s) = s {asteroids = spawnNew}
-                  | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
-                where
-                    spawnNew = spawnAsteroid --replicate numberInWave spawnAsteroid
+updateTick =  update . checkCollisions --updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
 
 spawnAsteroid :: [Asteroid]
 spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    $ asteroidRadius sizeBig,
@@ -33,36 +27,6 @@ spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig  
             pickDirectionM = (4,1)
             pickDirectionS = (2,0)
 
-updateBullets :: Space -> Space
-updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets s}
-                where
-                    checkBulletsDistance :: [Bullet] -> [Bullet]
-                    checkBulletsDistance = filter (\x -> distance x < halfscreen)
-                    updateBullet :: Bullet -> Bullet
-                    updateBullet = updateBulletPosition . updateBulletDistance
-                           where
-                        updateBulletPosition b = b {entityBullet = updateEntityPosition (entityBullet b)}
-                        updateBulletDistance b = b {distance = distance b + speed (entityBullet b)}
-
-
-updateSaucers :: Space -> Space
-updateSaucers s = s {saucers = map updateSaucer $ saucers s}
-
-updatePlayer :: Space -> Space
-updatePlayer s = let update p = p {entityPlayer = (updateentityPlayerPosition . dragEntityPlayer) (entityPlayer p)}
-                 in s {player = update $ player s}
-            where
-                updateentityPlayerPosition :: Entity -> Entity
-                updateentityPlayerPosition = updateEntityPosition
-                dragEntityPlayer :: Entity -> Entity
-                dragEntityPlayer s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
-
-updateAsteroid :: Asteroid -> Asteroid
-updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }
-
-updateSaucer :: Saucer -> Saucer
-updateSaucer s = s
-
 
 checkPoint :: Point -> Point --screensize/2 + blackMargin (dark place) as maximum point values. with negatives as well -> swap sides
 checkPoint old@(x,y) | x >  (halfscreen + blackMargin)    = ((-halfscreen) -blackMargin, y)
@@ -71,15 +35,54 @@ checkPoint old@(x,y) | x >  (halfscreen + blackMargin)    = ((-halfscreen) -blac
                      | y <  ((-halfscreen) - blackMargin) = (x, halfscreen+blackMargin)
                      | otherwise = old
 
---first update position, simply with direction and speed. 
---Then check if new position is outside of set bounderies of the play space and 
-updateEntityPosition :: Entity -> Entity
-updateEntityPosition a = a{ position = checkPoint (movePoint a)}
-                where
-                    movePoint :: Entity -> Point
-                    movePoint a = mulSV (speed a) (direction a) `addPoint` position a
+
+class Update a where
+    update :: a -> a
+
+instance Update a => Update [a] where 
+    update :: Update a => [a] -> [a]
+    update = map update
+
+instance Update Space where 
+    update :: Space -> Space
+    update s = s { player    = update (player s), 
+                   asteroids = updateAsteroids (asteroids s), 
+                   saucers   = update (saucers s),
+                   bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
+                 }
+
+instance Update Entity where
+    --first update position, simply with direction and speed. 
+    --then check if new position is outside of set bounderies of the play space and 
+    update :: Entity -> Entity
+    update e = e { position = checkPoint $ mulSV (speed e) (direction e) `addPoint` position e}
+
+instance Update Player where
+    update :: Player -> Player
+    update p = p {entityPlayer = (update . drag) (entityPlayer p)}
+        where
+            drag p = p {speed = max 0 (speed p - speed p * playerDrag)}
+
+instance Update Asteroid where
+    update :: Asteroid -> Asteroid
+    update a = a { entityAsteroid = update (entityAsteroid a) }
+
+updateAsteroids :: [Asteroid] -> [Asteroid]
+updateAsteroids as | null as   = spawnAsteroid --replicate numberInWave spawnAsteroid
+                   | otherwise = update as
+
+instance Update Bullet where
+    update :: Bullet -> Bullet
+    update b = b {entityBullet = update e, distance = distance b + speed e}
+        where
+            e = entityBullet b
+
+instance Update Saucer where
+    update :: Saucer -> Saucer
+    update s = s { entitySaucer = update (entitySaucer s) }
 
 
+            
 
 
 

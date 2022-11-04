@@ -62,7 +62,7 @@ instance Render Entity where
 -- All instances to turn one of the attributes of the space into a picture
 instance Render Player where
     render :: Picture -> Player -> Picture
-    render bmp p = translateToPosition (position entity) $ rotateToOrientation (orientation p) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (score p))])
+    render bmp p = translateToPosition (position entity) $ rotateToOrientation (orientation p) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (lives p))])
         where
             entity = entityPlayer p
 

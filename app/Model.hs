@@ -24,7 +24,7 @@ halfscreen = fromIntegral screensize / 2
 playerDrag :: Float
 playerDrag = 7 -- in percentile 0-100. 100 being higher drag
 playerThrust :: Float
-playerThrust = 5
+playerThrust = 2
 playerMaxSpeed :: Float
 playerMaxSpeed = 20
 
@@ -33,8 +33,8 @@ bulletSpeed = 30 -- always higher then player!
 bulletRadius :: Float
 bulletRadius = 30
 
-rotateSpeed :: Float
-rotateSpeed = 0.05
+playerRotateSpeed :: Float
+playerRotateSpeed = 0.09
 
 --asteroid
 nextWaveScores :: [Int]
@@ -59,12 +59,18 @@ numberInWave :: Int
 numberInWave = 1
 
     --hitboxes
+playerBitmapSize :: Float -- size of bitmap in pixels
+playerBitmapSize = 80
+
 playerRadius :: Float
-playerRadius = 10
+playerRadius = (playerBitmapSize - (playerBitmapSize / 5)) / 2
 
     --hitboxes
+asteroidBitmapSize :: Float -- size of bitmap in pixels
+asteroidBitmapSize = 90
+
 asteroidRadius :: Float -> Float
-asteroidRadius size = 90 * size
+asteroidRadius size = asteroidBitmapSize / 2 * size
     --scores
 asteroidScore :: Asteroid -> Int
 asteroidScore a = round $ 20.0 * size (entityAsteroid a)

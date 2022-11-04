@@ -87,9 +87,9 @@ escapeGame s = initialSpace
 alterPlayer :: Space -> Space
 alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                     p = player s
-                    playerLeft  | left      = rotatePlayer rotateSpeed p
+                    playerLeft  | left      = rotatePlayer playerRotateSpeed p
                                 | otherwise = p
-                    playerRight | right     = rotatePlayer (-rotateSpeed) playerLeft
+                    playerRight | right     = rotatePlayer (-playerRotateSpeed) playerLeft
                                 | otherwise = playerLeft
                     playerFwd   | fwd       = fwdPlayer playerRight
                                 | otherwise = playerRight

@@ -15,8 +15,7 @@ updateTick :: Space -> Space
 updateTick = updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
 
 updateAsteroids :: Space -> Space
-updateAsteroids s | score (player s) == 0 && null (asteroids s) = s {asteroids = spawnNew}
-                  | score (player s) `elem` nextWaveScores = s {asteroids = spawnNew}
+updateAsteroids s | null (asteroids s) = s {asteroids = spawnNew}
                   | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
                 where
                     spawnNew = replicate numberInWave spawnAsteroid
@@ -34,6 +33,11 @@ updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets
                 where
                     checkBulletsDistance :: [Bullet] -> [Bullet]
                     checkBulletsDistance = filter (\x -> distance x < halfscreen)
+                    updateBullet :: Bullet -> Bullet
+                    updateBullet = updateBulletPosition . updateBulletDistance
+                           where
+                        updateBulletPosition b = b {projectile = updateEntityPosition (projectile b)}
+                        updateBulletDistance b = b {distance = distance b + speed (projectile b)}
 
 
 updateSaucers :: Space -> Space
@@ -49,13 +53,9 @@ updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship 
                 dragShip s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
 
 updateAsteroid :: Asteroid -> Asteroid
-updateAsteroid a = MkAst $ updateEntityPosition $ entityAsteroid a
+updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }
 
-updateBullet :: Bullet -> Bullet
-updateBullet = updateBulletPosition . updateBulletDistance
-            where
-                updateBulletPosition b = b {projectile = updateEntityPosition (projectile b)}
-                updateBulletDistance b = b {distance = distance b + speed (projectile b)}
+
 
 
 

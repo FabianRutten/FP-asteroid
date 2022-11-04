@@ -23,7 +23,7 @@ input e space = return (inputKey e space)
 
 inputKey :: Event -> Space -> Space
 inputKey (EventKey key Down _ _) s 
-    | key == Char 'c'          = pause s      -- pause/unpause when 'p' is pressed down
+    | key == Char 'p'          = pause s      -- pause/unpause when 'p' is pressed down
     | key == SpecialKey KeyEsc = escapeGame s -- escape game on esc
 inputKey (EventKey (SpecialKey sk) state _ _) s
     | static s  = s                       -- do nothing if game is static
@@ -69,7 +69,6 @@ fwdPlayer :: Player -> Player
 fwdPlayer p = p {entityPlayer = q {direction = normalizeV newMovementV, speed = magV newMovementV}}
             where
               q = entityPlayer p
-              scaleWithSpeed = mulSV $ speed q
               movementV = mulSV (speed q) (direction q)
               thrustV = mulSV playerThrust (orientation p)
               newMovementV = movementV `addPoint` thrustV

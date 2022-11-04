@@ -44,13 +44,13 @@ updateSaucers :: Space -> Space
 updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 
 updatePlayer :: Space -> Space
-updatePlayer s = let update p = p {entityPlayer = (updateentityPlayerPosition . dragentityPlayer) (entityPlayer p)}
+updatePlayer s = let update p = p {entityPlayer = (updateentityPlayerPosition . dragEntityPlayer) (entityPlayer p)}
                  in s {player = update $ player s}
             where
                 updateentityPlayerPosition :: Entity -> Entity
                 updateentityPlayerPosition = updateEntityPosition
-                dragentityPlayer :: Entity -> Entity
-                dragentityPlayer s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
+                dragEntityPlayer :: Entity -> Entity
+                dragEntityPlayer s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }

@@ -55,7 +55,7 @@ updateAsteroids as | null as   = spawnAsteroid --replicate numberInWave spawnAst
                          MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium $ asteroidRadius sizeMedium,
                          MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  $ asteroidRadius sizeSmall]
            where
-            xOry = True --for now, needs to be random
+            xOry = False --for now, needs to be random
             pickPoint | xOry = (0,0)
                       | otherwise = (400,400)
             pickDirectionB = (1,4)

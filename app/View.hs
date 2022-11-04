@@ -6,7 +6,7 @@ module View where
 import Graphics.Gloss
 import Graphics.Gloss.Data.Vector
 import Model
-import Graphics.Gloss.Geometry.Angle (degToRad)
+import Graphics.Gloss.Geometry.Angle (radToDeg)
 
 -- load all bitmaps and call pure function
 view :: [Picture] -> Space -> IO Picture
@@ -35,7 +35,7 @@ rotateToOrientation :: Vector -> Picture -> Picture
 rotateToOrientation v@(x,_) | x < 0 = Rotate $ - shift
                             | otherwise = Rotate shift
                     where
-                        shift = degToRad $ angleVV v (0,1)
+                        shift = radToDeg $ angleVV v (0,1)
 
 scaleUniform :: Float -> Picture -> Picture
 scaleUniform s = scale s s

@@ -65,11 +65,11 @@ asteroidRadius size | size == sizeBig = 30
                     | size == sizeSmall = 10
                     | otherwise = 0 --pattern matchin (could in theory not be hit, but just to be sure
     --scores
-asteroidScore :: Float -> Int
-asteroidScore size | size == sizeBig = 100
-                   | size == sizeMedium = 70
-                   | size == sizeSmall = 30
-                   | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
+asteroidScore :: Asteroid -> Int
+asteroidScore a | size (entityAsteroid a) == sizeBig = 100
+                | size (entityAsteroid a) == sizeMedium = 70
+                | size (entityAsteroid a) == sizeSmall = 30
+                | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
 
 --initials
 initialSpace :: Space

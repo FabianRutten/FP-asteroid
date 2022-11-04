@@ -115,7 +115,7 @@ bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (astero
                                | otherwise = recur bs as (a:a1,b:b1,newScore)
                             where
                               getScore :: Bullet -> Asteroid -> Int
-                              getScore b a | fromPlayer b = asteroidScore (size $ entityAsteroid a)
+                              getScore b a | fromPlayer b = asteroidScore a
                                            | otherwise = 0
 
 

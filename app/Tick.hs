@@ -21,7 +21,7 @@ updateAsteroids s | null (asteroids s) = s {asteroids = spawnNew}
                     spawnNew = replicate numberInWave spawnAsteroid
 
 spawnAsteroid :: Asteroid
-spawnAsteroid = MkAst $ MkEntity sizeBig pickPoint pickDirection speedBig $ asteroidRadius sizeBig
+spawnAsteroid = MkAst $ MkEntity sizeMedium pickPoint pickDirection speedBig $ asteroidRadius sizeMedium
            where
             xOry = True --for now, needs to be random
             pickPoint | xOry = (0,0)

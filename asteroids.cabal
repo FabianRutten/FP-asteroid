@@ -18,4 +18,5 @@ executable asteroids
                      , Model
                      , View
                      , Tick
+                     , Collision
   default-language:    Haskell2010

@@ -3,10 +3,11 @@
 module Tick where
 
 import Model
-import Data.Data (Data)
+import Collision
+import Data.Data
+import Data.Maybe
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
-
 import System.Random
 
 
@@ -79,62 +80,7 @@ updateEntityPosition a = a{ position = checkPoint (movePoint a)}
                     movePoint a = mulSV (speed a) (direction a) `addPoint` position a
 
 
-checkCollisions :: Space -> Space
-checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
-
-asteroidsCollisionsWithPlayer :: Space -> Space
-asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
-                                          then s {player = (player s){lives = lives (player s) - 1}}
-                                          else gameOver s
-                                | otherwise = s
-                    where
-                        isHit             :: Bool
-                        isHit                 = any (\a -> asteroidHitPlayer a $ player s) $ asteroids s
-                        asteroidHitPlayer :: Asteroid -> Player -> Bool
-                        asteroidHitPlayer a p = checkHit (entityAsteroid a) $ entityPlayer p
 
 
-bulletsWithAsteroids :: Space -> Space
-bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (asteroids s) (score $ player s)
-                         in
-                        s {asteroids = as, bullets = bs, player = (player s){score = newScore} } 
-                   where
-                    asteroidHits :: [Bullet] -> [Asteroid] -> Int -> ([Asteroid],[Bullet],Int)
---(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit newScorees, there is ALWAYS one bullet and one possible asteroid])
-                    asteroidHits bs as oldScore = asteroidHits' bs as ([],[], oldScore)
-                            where
-                        asteroidHits' :: [Bullet] 
-                              -> [Asteroid]
-                              -> ([Asteroid],[Bullet],Int)
-                              -> ([Asteroid],[Bullet],Int)
-                        asteroidHits' [] as (a1,b1,newScore) = (as++a1,b1,newScore)
-                        asteroidHits' bs [] (a1,b1,newScore) = (a1,bs++b1,newScore)
-                        asteroidHits' (b:bs) (a:as) (a1,b1,newScore)
-                               | checkHit (entityBullet b) (entityAsteroid a) = asteroidHits' bs as (a1,b1, newScore + getScore b a)
-                               | otherwise = asteroidHits' bs as (a:a1,b:b1,newScore)
-                            where
-                              getScore :: Bullet -> Asteroid -> Int
-                              getScore b a | fromPlayer b = asteroidScore a
-                                           | otherwise = 0
-
---not sure if needed anymore
-headm :: [a] -> Maybe a --https://stackoverflow.com/questions/54015516/get-first-element-of-list-as-maybe-vs-maybe-elements
-headm []     = Nothing
-headm (x:xs) = Just x
-
---not sure if needed anymore
-createCombos :: [a] -> [b] -> [(a,b)]
-createCombos a b = (,) <$> a <*> b
 
 
-checkHit :: Entity -> Entity -> Bool
-checkHit a b = distance2P (position a) (position b) <= (radius a + radius b)
-
-distance2P :: Point -> Point -> Float
-distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
-    where
-      x' = x1 - x2
-      y' = y1 - y2
-
-gameOver :: Space -> Space
-gameOver s = s{gameState = GameOver}

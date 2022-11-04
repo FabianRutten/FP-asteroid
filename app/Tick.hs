@@ -84,7 +84,7 @@ checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
 
 asteroidsCollisionsWithPlayer :: Space -> Space
 asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
-                                          then s {player = (player s){score = score (player s) - 1}}
+                                          then s {player = (player s){lives = lives (player s) - 1}}
                                           else gameOver s
                                 | otherwise = s
                     where

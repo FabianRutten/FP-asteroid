@@ -18,15 +18,19 @@ updateAsteroids :: Space -> Space
 updateAsteroids s | null (asteroids s) = s {asteroids = spawnNew}
                   | otherwise = s {asteroids = map updateAsteroid $ asteroids s}
                 where
-                    spawnNew = replicate numberInWave spawnAsteroid
+                    spawnNew = spawnAsteroid --replicate numberInWave spawnAsteroid
 
-spawnAsteroid :: Asteroid
-spawnAsteroid = MkAst $ MkEntity sizeMedium pickPoint pickDirection speedBig $ asteroidRadius sizeMedium
+spawnAsteroid :: [Asteroid]
+spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    $ asteroidRadius sizeBig,
+                 MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium $ asteroidRadius sizeMedium,
+                 MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  $ asteroidRadius sizeSmall]
            where
             xOry = True --for now, needs to be random
             pickPoint | xOry = (0,0)
                       | otherwise = (400,400)
-            pickDirection = (1,4)
+            pickDirectionB = (1,4)
+            pickDirectionM = (4,1)
+            pickDirectionS = (2,0)
 
 updateBullets :: Space -> Space
 updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets s}

@@ -55,10 +55,6 @@ updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }
 
-
-
-
-
 updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
 
@@ -117,12 +113,6 @@ bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (astero
                               getScore :: Bullet -> Asteroid -> Int
                               getScore b a | fromPlayer b = asteroidScore a
                                            | otherwise = 0
-
-
-
-
-
-
 
 --not sure if needed anymore
 headm :: [a] -> Maybe a --https://stackoverflow.com/questions/54015516/get-first-element-of-list-as-maybe-vs-maybe-elements

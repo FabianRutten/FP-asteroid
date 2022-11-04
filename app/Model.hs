@@ -48,7 +48,11 @@ sizeSmall :: Float
 sizeSmall = 0.5
     --speeds
 speedBig :: Float
-speedBig = 3
+speedBig = 1
+speedMedium :: Float
+speedMedium = 1.5
+speedSmall :: Float
+speedSmall = 2
 
 
 numberInWave :: Int

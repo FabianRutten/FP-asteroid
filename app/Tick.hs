@@ -55,10 +55,6 @@ updatePlayer s = let update p = p {entityPlayer = (updateentityPlayerPosition . 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }
 
-
-
-
-
 updateSaucer :: Saucer -> Saucer
 updateSaucer s = s
 
@@ -115,14 +111,8 @@ bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (astero
                                | otherwise = recur bs as (a:a1,b:b1,newScore)
                             where
                               getScore :: Bullet -> Asteroid -> Int
-                              getScore b a | fromPlayer b = asteroidScore (size $ entityAsteroid a)
+                              getScore b a | fromPlayer b = asteroidScore a
                                            | otherwise = 0
-
-
-
-
-
-
 
 --not sure if needed anymore
 headm :: [a] -> Maybe a --https://stackoverflow.com/questions/54015516/get-first-element-of-list-as-maybe-vs-maybe-elements

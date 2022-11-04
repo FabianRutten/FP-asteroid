@@ -22,8 +22,9 @@ input :: Event -> Space -> IO Space
 input e space = return (inputKey e space)
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey (Char 'p') Down _ _) s -- pause/unpause when 'p' is pressed down
-    = pause s
+inputKey (EventKey key Down _ _) s 
+    | key == Char 'c'          = pause s      -- pause/unpause when 'p' is pressed down
+    | key == SpecialKey KeyEsc = escapeGame s -- escape game on esc
 inputKey (EventKey (SpecialKey sk) state _ _) s
     | static s  = s                       -- do nothing if game is static
     | otherwise = case sk of
@@ -31,7 +32,6 @@ inputKey (EventKey (SpecialKey sk) state _ _) s
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
         KeySpace -> shootPlayer   state s -- shoot on space
-        KeyEsc   -> escapeGame    state s -- escape game on esc
         _        -> s                     -- keep the same if no relevant special key is pressed
 inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
 
@@ -83,9 +83,8 @@ rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
 
 -- for now return to initalSpace, reset game
-escapeGame :: KeyState -> Space -> Space
-escapeGame state s | state == Down = initialSpace
-                   | otherwise     = s
+escapeGame :: Space -> Space
+escapeGame s = initialSpace
 
 -- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
 -- possible to hold multiple keys at the same time

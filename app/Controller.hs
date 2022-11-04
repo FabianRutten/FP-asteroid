@@ -64,19 +64,15 @@ shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- on
           newBullet = MkBullet newProjectile True 0
           newProjectile = MkEntity 1 startPoint (orientation p) bulletSpeed bulletRadius
 
-thrustPlayer :: Player -> Player  --maybe needs to be percentile
-thrustPlayer p = p {entityPlayer = q {speed = speed q + playerThrust}}
-              where q = entityPlayer p
-
 
 fwdPlayer :: Player -> Player
-fwdPlayer = thrustPlayer . changeDirectionPlayer
-
-changeDirectionPlayer :: Player -> Player
-changeDirectionPlayer p = p {entityPlayer = q {direction = normalizeV $ scaleWithSpeed (direction q) `addPoint` orientation p }}
+fwdPlayer p = p {entityPlayer = q {direction = normalizeV newMovementV, speed = magV newMovementV}}
             where
               q = entityPlayer p
               scaleWithSpeed = mulSV $ speed q
+              movementV = mulSV (speed q) (direction q)
+              thrustV = mulSV playerThrust (orientation p)
+              newMovementV = movementV `addPoint` thrustV
 
 
 rotatePlayer :: Float -> Player -> Player

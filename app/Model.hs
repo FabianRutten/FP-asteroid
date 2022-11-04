@@ -41,11 +41,11 @@ nextWaveScores :: [Int]
 nextWaveScores = [100,200]
     --Sizes
 sizeBig :: Float
-sizeBig = 3
+sizeBig = 1.5
 sizeMedium :: Float
-sizeMedium = 2
+sizeMedium = 1
 sizeSmall :: Float
-sizeSmall = 1
+sizeSmall = 0.5
     --speeds
 speedBig :: Float
 speedBig = 3
@@ -60,16 +60,17 @@ playerRadius = 10
 
     --hitboxes
 asteroidRadius :: Float -> Float
-asteroidRadius size | size == sizeBig = 30
-                    | size == sizeMedium = 20
-                    | size == sizeSmall = 10
-                    | otherwise = 0 --pattern matchin (could in theory not be hit, but just to be sure
+asteroidRadius size = 90 * size
     --scores
 asteroidScore :: Asteroid -> Int
-asteroidScore a | size (entityAsteroid a) == sizeBig = 100
-                | size (entityAsteroid a) == sizeMedium = 70
-                | size (entityAsteroid a) == sizeSmall = 30
-                | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
+asteroidScore a = round $ 20.0 * size (entityAsteroid a)
+
+-- asteroidScore a | getSize == sizeBig = 100
+--                 | getSize == sizeMedium = 70
+--                 | getSize == sizeSmall = 30
+--                 | otherwise = 0  --pattern matchin (could in theory not be hit, but just to be sure
+--                 where
+--                     getSize = size . entityAsteroid $ a
 
 --initials
 initialSpace :: Space

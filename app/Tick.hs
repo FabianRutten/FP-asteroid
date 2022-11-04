@@ -95,20 +95,19 @@ bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (astero
                          in
                         s {asteroids = as, bullets = bs, player = (player s){score = newScore} } 
                    where
-                    
                     asteroidHits :: [Bullet] -> [Asteroid] -> Int -> ([Asteroid],[Bullet],Int)
 --(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit newScorees, there is ALWAYS one bullet and one possible asteroid])
-                    asteroidHits bs as oldScore = recur bs as ([],[], oldScore)
+                    asteroidHits bs as oldScore = asteroidHits' bs as ([],[], oldScore)
                             where
-                        recur :: [Bullet] 
+                        asteroidHits' :: [Bullet] 
                               -> [Asteroid]
                               -> ([Asteroid],[Bullet],Int)
                               -> ([Asteroid],[Bullet],Int)
-                        recur [] as (a1,b1,newScore) = (as++a1,b1,newScore)
-                        recur bs [] (a1,b1,newScore) = (a1,bs++b1,newScore)
-                        recur (b:bs) (a:as) (a1,b1,newScore)
-                               | checkHit (entityBullet b) (entityAsteroid a) = recur bs as (a1,b1, newScore + getScore b a)
-                               | otherwise = recur bs as (a:a1,b:b1,newScore)
+                        asteroidHits' [] as (a1,b1,newScore) = (as++a1,b1,newScore)
+                        asteroidHits' bs [] (a1,b1,newScore) = (a1,bs++b1,newScore)
+                        asteroidHits' (b:bs) (a:as) (a1,b1,newScore)
+                               | checkHit (entityBullet b) (entityAsteroid a) = asteroidHits' bs as (a1,b1, newScore + getScore b a)
+                               | otherwise = asteroidHits' bs as (a:a1,b:b1,newScore)
                             where
                               getScore :: Bullet -> Asteroid -> Int
                               getScore b a | fromPlayer b = asteroidScore a

@@ -36,21 +36,21 @@ updateBullets s = s {bullets = map updateBullet $ checkBulletsDistance $ bullets
                     updateBullet :: Bullet -> Bullet
                     updateBullet = updateBulletPosition . updateBulletDistance
                            where
-                        updateBulletPosition b = b {projectile = updateEntityPosition (projectile b)}
-                        updateBulletDistance b = b {distance = distance b + speed (projectile b)}
+                        updateBulletPosition b = b {entityBullet = updateEntityPosition (entityBullet b)}
+                        updateBulletDistance b = b {distance = distance b + speed (entityBullet b)}
 
 
 updateSaucers :: Space -> Space
 updateSaucers s = s {saucers = map updateSaucer $ saucers s}
 
 updatePlayer :: Space -> Space
-updatePlayer s = let update p = p {ship = (updateShipPosition . dragShip) (ship p)}
+updatePlayer s = let update p = p {entityPlayer = (updateentityPlayerPosition . dragentityPlayer) (entityPlayer p)}
                  in s {player = update $ player s}
             where
-                updateShipPosition :: Entity -> Entity
-                updateShipPosition = updateEntityPosition
-                dragShip :: Entity -> Entity
-                dragShip s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
+                updateentityPlayerPosition :: Entity -> Entity
+                updateentityPlayerPosition = updateEntityPosition
+                dragentityPlayer :: Entity -> Entity
+                dragentityPlayer s = s {speed = max 0 (speed s - speed s * playerDrag / 100)}
 
 updateAsteroid :: Asteroid -> Asteroid
 updateAsteroid a = a { entityAsteroid = updateEntityPosition $ entityAsteroid a }
@@ -91,7 +91,7 @@ asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
                         isHit             :: Bool
                         isHit                 = any (\a -> asteroidHitPlayer a $ player s) $ asteroids s
                         asteroidHitPlayer :: Asteroid -> Player -> Bool
-                        asteroidHitPlayer a p = checkHit (entityAsteroid a) $ ship p
+                        asteroidHitPlayer a p = checkHit (entityAsteroid a) $ entityPlayer p
 
 
 bulletsWithAsteroids :: Space -> Space
@@ -111,7 +111,7 @@ bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (astero
                         recur [] as (a1,b1,newScore) = (as++a1,b1,newScore)
                         recur bs [] (a1,b1,newScore) = (a1,bs++b1,newScore)
                         recur (b:bs) (a:as) (a1,b1,newScore)
-                               | checkHit (projectile b) (entityAsteroid a) = recur bs as (a1,b1, newScore + getScore b a)
+                               | checkHit (entityBullet b) (entityAsteroid a) = recur bs as (a1,b1, newScore + getScore b a)
                                | otherwise = recur bs as (a:a1,b:b1,newScore)
                             where
                               getScore :: Bullet -> Asteroid -> Int

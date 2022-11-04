@@ -103,12 +103,12 @@ data Entity = MkEntity { size      :: Float
 newtype Saucer = MkSaucer { entitySaucer :: Entity}
 newtype Asteroid = MkAst { entityAsteroid :: Entity}
 
-data Bullet = MkBullet { projectile :: Entity
+data Bullet = MkBullet { entityBullet :: Entity
                        , fromPlayer :: Bool
                        , distance   :: Float
                        }
 
-data Player = MkPlayer { ship        :: Entity
+data Player = MkPlayer { entityPlayer        :: Entity
                        , orientation :: Vector
                        , lives       :: Int
                        , score       :: Int

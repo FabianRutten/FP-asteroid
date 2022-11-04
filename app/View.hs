@@ -12,9 +12,9 @@ view :: Space -> IO Picture
 view s = do
     backgroundBMP <- loadBMP "bitmaps/background.bmp"
     bulletBMP     <- loadBMP "bitmaps/bullet.bmp"
-    asteroidBMP   <- loadBMP "bitmaps/ship.bmp"
-    saucerBMP     <- loadBMP "bitmaps/ship.bmp"
-    playerBMP     <- loadBMP "bitmaps/ship.bmp"
+    asteroidBMP   <- loadBMP "bitmaps/entityPlayer.bmp"
+    saucerBMP     <- loadBMP "bitmaps/entityPlayer.bmp"
+    playerBMP     <- loadBMP "bitmaps/entityPlayer.bmp"
     return $ viewPure s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
 
 -- choose correct view function based on the state of the game
@@ -70,7 +70,7 @@ instance Render Player where
     render :: Picture -> Player -> Picture
     render bmp p = translateToPosition (position entity) $ rotateToOrientation (orientation p) $ scaleUniform (size entity) (pictures [bmp, color red $ text (show (score p))])
         where
-            entity = ship p
+            entity = entityPlayer p
 
 instance Render Asteroid where
     render :: Picture -> Asteroid -> Picture
@@ -88,4 +88,4 @@ instance Render Bullet where
     render :: Picture -> Bullet -> Picture
     render bmp b =  render (pictures [bmp, color red $ text (show (position entity))]) entity
         where
-            entity = projectile b
+            entity = entityBullet b

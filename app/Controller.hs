@@ -59,23 +59,23 @@ shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- on
                     | otherwise     = s
       where
           p = player s
-          q = ship p
+          q = entityPlayer p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
           newProjectile = MkEntity 1 startPoint (orientation p) bulletSpeed bulletRadius
 
 thrustPlayer :: Player -> Player  --maybe needs to be percentile
-thrustPlayer p = p {ship = q {speed = speed q + playerThrust}}
-              where q = ship p
+thrustPlayer p = p {entityPlayer = q {speed = speed q + playerThrust}}
+              where q = entityPlayer p
 
 
 fwdPlayer :: Player -> Player
 fwdPlayer = thrustPlayer . changeDirectionPlayer
 
 changeDirectionPlayer :: Player -> Player
-changeDirectionPlayer p = p {ship = q {direction = normalizeV $ scaleWithSpeed (direction q) `addPoint` orientation p }}
+changeDirectionPlayer p = p {entityPlayer = q {direction = normalizeV $ scaleWithSpeed (direction q) `addPoint` orientation p }}
             where
-              q = ship p
+              q = entityPlayer p
               scaleWithSpeed = mulSV $ speed q
 
 

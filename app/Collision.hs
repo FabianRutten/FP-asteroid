@@ -1,6 +1,7 @@
 module Collision where
 
 import Model
+import Random
 import Data.Maybe
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
@@ -18,7 +19,7 @@ asteroidsCollisionsWithPlayer s | isNothing hit = s
 checkLives :: Space -> Space
 checkLives s | (lives . player) s == 0 = gameOver s
              | otherwise = s
-                 
+
 
 
 bulletsWithAsteroids :: Space -> Space
@@ -49,7 +50,16 @@ asteroidEntityHit e as = asteroidEntityHit' e as ([],Nothing)
               where
         asteroidEntityHit' _ [] hit = hit
         asteroidEntityHit' e (a:as) (left,_) | checkHit e (entityAsteroid a) = (left++as, Just a)
-                                       | otherwise = asteroidEntityHit' e as (a:left, Nothing)
+                                             | otherwise = asteroidEntityHit' e as (a:left, Nothing)
+
+spawnChildAsteroids :: Asteroid -> [Asteroid]
+spawnChildAsteroids a | sizeA > sizeSmall = replicate 2 (spawnChildAsteroid (sizeA - 0.5))
+                      | otherwise = []
+                    where
+                     sizeA = size (entityAsteroid a)
+                     spawnChildAsteroid sizeNew = MkAst $ MkEntity sizeNew (position (entityAsteroid a)) randomDirection randomSpeed (asteroidRadius sizeNew)
+
+
 
 checkHit :: Entity -> Entity -> Bool
 checkHit a b = distance2P (position a) (position b) <= (radius a + radius b)

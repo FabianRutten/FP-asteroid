@@ -95,33 +95,29 @@ asteroidsCollisionsWithPlayer s | isHit = if lives (player s) > 1
 
 
 bulletsWithAsteroids :: Space -> Space
-bulletsWithAsteroids s = let ((as,bs),matches) = asteroidHits (bullets s) (asteroids s)
+bulletsWithAsteroids s = let (as,bs,newScore) = asteroidHits (bullets s) (asteroids s) (score $ player s)
                          in
-                         setAsteroids as $ setBullets bs $ setScore (getScore matches) s
+                        s {asteroids = as, bullets = bs, player = (player s){score = newScore} } 
                    where
-                    setAsteroids :: [Asteroid] -> Space -> Space
-                    setAsteroids a s = s {asteroids = a}
-                    setBullets   ::  [Bullet] -> Space -> Space
-                    setBullets b s   = s {bullets = b}
-                    setScore :: Int -> Space -> Space
-                    setScore score s = s {player = (player s){score = score}}
-                    getScore :: [(Bullet, Asteroid)] -> Int
-                    getScore [] = 0
-                    getScore (x@(b,a):xs) | fromPlayer b = asteroidScore (size $ entityAsteroid a) + getScore xs
-                                          | otherwise = getScore xs
-
-                    asteroidHits :: [Bullet] -> [Asteroid] -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
---(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit matches, there is ALWAYS one bullet and one possible asteroid])
-                    asteroidHits bs as = recur bs as (([],[]),[])
+                    
+                    asteroidHits :: [Bullet] -> [Asteroid] -> Int -> ([Asteroid],[Bullet],Int)
+--(([asteroids that will be displayed, so not destroyed],[Bullets that will be displayed, so havent hit anything yet]),[all hit newScorees, there is ALWAYS one bullet and one possible asteroid])
+                    asteroidHits bs as oldScore = recur bs as ([],[], oldScore)
                             where
-                        recur :: [Bullet] -> [Asteroid]
-                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
-                                  -> (([Asteroid],[Bullet]),[(Bullet,Asteroid)])
-                        recur [] as ((a1,b1),match) = ((as++a1,b1),match)
-                        recur bs [] ((a1,b1),match) = ((a1,bs++b1),match)
-                        recur (b:bs) (a:as) ((a1,b1),match)
-                               | checkHit (projectile b) (entityAsteroid a) = recur bs as ((a1,b1), (b,a):match)
-                               | otherwise = recur bs as ((a:a1,b:b1),match)
+                        recur :: [Bullet] 
+                              -> [Asteroid]
+                              -> ([Asteroid],[Bullet],Int)
+                              -> ([Asteroid],[Bullet],Int)
+                        recur [] as (a1,b1,newScore) = (as++a1,b1,newScore)
+                        recur bs [] (a1,b1,newScore) = (a1,bs++b1,newScore)
+                        recur (b:bs) (a:as) (a1,b1,newScore)
+                               | checkHit (projectile b) (entityAsteroid a) = recur bs as (a1,b1, newScore + getScore b a)
+                               | otherwise = recur bs as (a:a1,b:b1,newScore)
+                            where
+                              getScore :: Bullet -> Asteroid -> Int
+                              getScore b a | fromPlayer b = asteroidScore (size $ entityAsteroid a)
+                                           | otherwise = 0
+
 
 
 

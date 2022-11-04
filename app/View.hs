@@ -8,14 +8,8 @@ import Graphics.Gloss.Data.Vector
 import Model
 
 -- load all bitmaps and call pure function
-view :: Space -> IO Picture
-view s = do
-    backgroundBMP <- loadBMP "bitmaps/background.bmp"
-    bulletBMP     <- loadBMP "bitmaps/bullet.bmp"
-    asteroidBMP   <- loadBMP "bitmaps/entityPlayer.bmp"
-    saucerBMP     <- loadBMP "bitmaps/entityPlayer.bmp"
-    playerBMP     <- loadBMP "bitmaps/entityPlayer.bmp"
-    return $ viewPure s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
+view :: [Picture] -> Space -> IO Picture
+view bmps s = return $ viewPure s bmps
 
 -- choose correct view function based on the state of the game
 viewPure :: Space -> [Picture] -> Picture

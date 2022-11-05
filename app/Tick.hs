@@ -7,7 +7,23 @@ import Graphics.Gloss.Data.Point ( Point )
 import Graphics.Gloss.Data.Vector ( mulSV )
 
 updateTick :: Space -> Space
-updateTick =  update . checkCollisions --updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
+updateTick =  update . spawnAsteroids . checkCollisions --updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
+
+spawnAsteroids :: Space -> Space
+spawnAsteroids s | null (asteroids s) = s { asteroids = spawnAsteroid }--replicate numberInWave spawnAsteroid
+                 | otherwise = s
+    where
+        spawnAsteroid :: [Asteroid]
+        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    $ asteroidRadius sizeBig,
+                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium $ asteroidRadius sizeMedium,
+                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  $ asteroidRadius sizeSmall]
+           where
+            xOry = False --for now, needs to be random
+            pickPoint | xOry = (0,0)
+                      | otherwise = (400,400)
+            pickDirectionB = (1,4)
+            pickDirectionM = (4,1)
+            pickDirectionS = (2,0)
 
 class Update a where
     update :: a -> a
@@ -19,7 +35,7 @@ instance Update a => Update [a] where
 instance Update Space where 
     update :: Space -> Space
     update s = s { player    = update (player s), 
-                   asteroids = updateAsteroids (asteroids s), 
+                   asteroids = update (asteroids s), 
                    saucers   = update (saucers s),
                    bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
                  }
@@ -46,28 +62,12 @@ instance Update Asteroid where
     update :: Asteroid -> Asteroid
     update a = a {entityAsteroid = update (entityAsteroid a)}
 
-updateAsteroids :: [Asteroid] -> [Asteroid]
-updateAsteroids as | null as   = spawnAsteroid --replicate numberInWave spawnAsteroid
-                   | otherwise = update as
-    where
-        spawnAsteroid :: [Asteroid]
-        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    $ asteroidRadius sizeBig,
-                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium $ asteroidRadius sizeMedium,
-                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  $ asteroidRadius sizeSmall]
-           where
-            xOry = False --for now, needs to be random
-            pickPoint | xOry = (0,0)
-                      | otherwise = (400,400)
-            pickDirectionB = (1,4)
-            pickDirectionM = (4,1)
-            pickDirectionS = (2,0)
+instance Update Saucer where
+    update :: Saucer -> Saucer
+    update s = s {entitySaucer = update (entitySaucer s)}
 
 instance Update Bullet where
     update :: Bullet -> Bullet
     update b = b {entityBullet = update e, distance = distance b + speed e}
         where
             e = entityBullet b
-
-instance Update Saucer where
-    update :: Saucer -> Saucer
-    update s = s {entitySaucer = update (entitySaucer s)}

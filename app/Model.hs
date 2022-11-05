@@ -41,6 +41,8 @@ playerMaxSpeed = 20
 bulletSpeed :: Float
 bulletSpeed = playerMaxSpeed * 1.5 -- always higher then player!
 
+bulletSize :: Float
+bulletSize = 1
 
 --asteroid
 numberInWave :: Int

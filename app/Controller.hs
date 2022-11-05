@@ -62,7 +62,7 @@ shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- on
           q = entityPlayer p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity 1 startPoint (orientation p) bulletSpeed bulletRadius
+          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
 
 
 fwdPlayer :: Player -> Player

@@ -32,10 +32,10 @@ instance Update a => Update [a] where
 
 instance Update Space where 
     update :: Space -> Space
-    update s = s { player    = update (player s), 
-                   asteroids = update (asteroids s), 
-                   saucers   = update (saucers s),
-                   bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
+    update s = s { player    = update (player s)
+                 , asteroids = update (asteroids s)
+                 , saucers   = update (saucers s)
+                 , bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
                  }
 
 instance Update Entity where

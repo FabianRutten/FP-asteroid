@@ -18,11 +18,17 @@ viewPure s | gameState s == GameOver = viewGameOver s
            | paused s    == Paused   = viewPaused s
            | otherwise               = viewPlaying s
 
-viewPaused :: Space -> [Picture] -> Picture
-viewPaused s bmps = pictures [renderSpace s bmps, staticText (-240) "PAUSED"]
-
 viewGameOver :: Space -> [Picture] -> Picture
-viewGameOver s bmps = pictures [renderSpace s bmps, staticText (-395) "GAME OVER"]
+viewGameOver s bmps = pictures [head bmps, render (last bmps) (player s), gameOverText, restartText, savedText]
+    where
+        gameOverText = staticText (-395, -20) 1   red    "GAME OVER"
+        restartText  = staticText (-250, -70) 0.3 magenta "Press \"R\" to restart game"
+        savedText    = staticText savedPoint  0.3 azure   savedString
+        (savedPoint, savedString) | saved s == Unsaved = ((-240, -120), "Press \"S\" to save score")
+                                  | otherwise          = ((-300, -120), "Succesfully saved score to file!")
+
+viewPaused :: Space -> [Picture] -> Picture
+viewPaused s bmps = pictures [renderSpace s bmps, staticText (-240, -20) 1 red "PAUSED"]
 
 viewPlaying :: Space -> [Picture] -> Picture
 viewPlaying = renderSpace
@@ -43,8 +49,9 @@ rotateToOrientation v@(x,_) | x < 0     = rotate (-shift)
 scaleUniform :: Float -> Picture -> Picture
 scaleUniform s = scale s s
 
-staticText :: Float -> String -> Picture
-staticText x = translateToPosition (x, -20) . color red . text
+-- make picture from string at given point and scale
+staticText :: Point -> Float -> Color -> String -> Picture
+staticText p s c = translateToPosition p . scaleUniform s . color c . text
 
 -- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
 renderSpace :: Space -> [Picture] -> Picture

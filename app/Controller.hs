@@ -13,18 +13,24 @@ import Graphics.Gloss.Data.Vector
 step :: Float -> Space -> IO Space
 step secs space | static space = return space                               -- do nothing if game is static
                 | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
---   do randomNumber <- randomIO
---      return $ GameState (ShowANumber (abs randomNumber `mod` 10)) 0
 
 
 -- | Handle user input
 input :: Event -> Space -> IO Space
+-- impure save to file when player presses 's' after game is over
+input (EventKey (Char 's') Down _ _) space@MkSpace {gameState = GameOver, saved = Unsaved} = saveScore space
+-- handle all other input in pure function
 input e space = return (inputKey e space)
+
+saveScore :: Space -> IO Space
+saveScore s = do
+    appendFile "highscores.txt" ("Your score was " ++ (show . score . player) s ++ "\n")
+    return s {saved = Saved}
 
 inputKey :: Event -> Space -> Space
 inputKey (EventKey key Down _ _) s 
-    | key == Char 'p'          = pause s      -- pause/unpause when 'p' is pressed down
-    | key == SpecialKey KeyEsc = escapeGame s -- escape game on esc
+    | key == Char 'p' = pause s           -- pause/unpause when 'p' is pressed down
+    | key == Char 'r' = restartGame s     -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
     | static s  = s                       -- do nothing if game is static
     | otherwise = case sk of
@@ -77,9 +83,8 @@ fwdPlayer p = p {entityPlayer = q {direction = normalizeV newMovementV, speed = 
 rotatePlayer :: Float -> Player -> Player
 rotatePlayer angle p = p {orientation = normalizeV $ rotateV angle (orientation p)}
 
--- for now return to initalSpace, reset game
-escapeGame :: Space -> Space
-escapeGame s = initialSpace $ randomSeed s
+restartGame :: Space -> Space
+restartGame s = initialSpace $ randomSeed s
 
 -- alter player attributes based on which arrowkey is pressed down according to arrowkeysDown
 -- possible to hold multiple keys at the same time

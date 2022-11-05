@@ -96,7 +96,7 @@ saucersScore s = 200
 
 --initials
 initialSpace :: StdGen -> Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False)
 
 initialPlayer :: Player
 initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 2 playerRadius) (0,1) 3 0
@@ -107,6 +107,7 @@ data Space = MkSpace { player        :: Player
                      , bullets       :: [Bullet]
                      , paused        :: Paused
                      , gameState     :: GameState
+                     , saved         :: Saved
                      , arrowkeysDown :: [Bool]
                      , randomSeed    :: StdGen
                      }
@@ -115,6 +116,9 @@ data Paused = Paused | Unpaused
     deriving (Eq, Show)
 
 data GameState = Alive | GameOver
+    deriving (Eq, Show)
+
+data Saved = Saved | Unsaved
     deriving (Eq, Show)
 
 data Entity = MkEntity { size      :: Float

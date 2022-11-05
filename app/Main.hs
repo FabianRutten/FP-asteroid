@@ -13,16 +13,16 @@ main = do
     backgroundBMP <- loadBMP "bitmaps/background.bmp"
     bulletBMP     <- loadBMP "bitmaps/bullet.bmp"
     asteroidBMP   <- loadBMP "bitmaps/asteroid.bmp"
-    saucerBMP     <- loadBMP "bitmaps/ship.bmp"
+    saucerBMP     <- loadBMP "bitmaps/saucer.bmp"
     playerBMP     <- loadBMP "bitmaps/ship.bmp"
     gen           <- getStdGen
-    playIO (InWindow "Asteroids" (screensize, screensize) (300, 100)) -- Or FullScreen
-              black            -- Background color
-              30               -- Frames per second
-              (initialSpace gen)     -- Initial state
-              (view [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP])      -- View function
-              input            -- Event function
-              step             -- Step function
+    playIO (InWindow "Asteroids" (screensize, screensize) (300, 100))
+              black                                                                 -- Background color
+              30                                                                    -- Frames per second
+              (initialSpace gen)                                                    -- Initial state
+              (view [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP])  -- View function
+              input                                                                 -- Event function
+              step                                                                  -- Step function
     
 
 

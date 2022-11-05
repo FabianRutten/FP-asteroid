@@ -99,7 +99,7 @@ initialSpace :: StdGen -> Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False)
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 2 playerRadius) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 0 playerRadius) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]

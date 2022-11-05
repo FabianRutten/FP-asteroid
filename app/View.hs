@@ -49,7 +49,7 @@ rotateToOrientation v@(x,_) | x < 0     = rotate (-shift)
 scaleUniform :: Float -> Picture -> Picture
 scaleUniform s = scale s s
 
--- make picture from string at given point and scale
+-- make picture from string at given point, scale and color
 staticText :: Point -> Float -> Color -> String -> Picture
 staticText p s c = translateToPosition p . scaleUniform s . color c . text
 

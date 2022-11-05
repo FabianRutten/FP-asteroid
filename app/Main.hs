@@ -14,7 +14,7 @@ main = do
     bulletBMP     <- loadBMP "bitmaps/bullet.bmp"
     asteroidBMP   <- loadBMP "bitmaps/asteroid.bmp"
     saucerBMP     <- loadBMP "bitmaps/saucer.bmp"
-    playerBMP     <- loadBMP "bitmaps/ship.bmp"
+    playerBMP     <- loadBMP "bitmaps/player.bmp"
     gen           <- getStdGen
     playIO (InWindow "Asteroids" (screensize, screensize) (300, 100))
               black                                                                 -- Background color

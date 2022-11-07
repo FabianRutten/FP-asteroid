@@ -21,7 +21,7 @@ viewPure s | gameState s == GameOver = viewGameOver s
 viewGameOver :: Space -> [Picture] -> Picture
 viewGameOver s bmps = pictures [head bmps, render (last bmps) (player s), gameOverText, restartText, savedText]
     where
-        gameOverText = staticText (-395, -20) 1   red    "GAME OVER"
+        gameOverText = staticText (-395, -20) 1   red     "GAME OVER"
         restartText  = staticText (-250, -70) 0.3 magenta "Press \"R\" to restart game"
         savedText    = staticText savedPoint  0.3 azure   savedString
         (savedPoint, savedString) | saved s == Unsaved = ((-240, -120), "Press \"S\" to save score")
@@ -90,7 +90,7 @@ instance Render Player where
             showLives = showLine (-390, 305) "Lives:" (-270, 305)  lives
 
             showLine p1 s p2 f = pictures [showText p1 s, showText p2 (show (f p))]
-            showText p = translateToPosition p . scaleUniform 0.3 . color chartreuse . text
+            showText p = staticText p 0.3 chartreuse
            
             debug = Blank --(transRotScale (position e) (orientation p) 0.3 . color red . text . show . orientation) p
 

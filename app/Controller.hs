@@ -90,12 +90,10 @@ restartGame s = initialSpace $ randomSeed s
 -- possible to hold multiple keys at the same time
 -- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
-alterPlayer s = let [left, fwd, right] = arrowkeysDown s
-                    p = player s
-                    playerLeft  | left      = rotatePlayer playerRotateSpeed p
-                                | otherwise = p
-                    playerRight | right     = rotatePlayer (-playerRotateSpeed) playerLeft
-                                | otherwise = playerLeft
-                    playerFwd   | fwd       = fwdPlayer playerRight
-                                | otherwise = playerRight
-                in s {player = playerFwd}
+alterPlayer s = s {player = alterPlayer' (player s)}
+    where
+        [left, fwd, right] = arrowkeysDown s
+        newP b f = if b then f else id
+    
+        alterPlayer' :: Player -> Player
+        alterPlayer' = newP fwd fwdPlayer . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)

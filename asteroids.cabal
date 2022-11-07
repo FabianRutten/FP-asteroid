@@ -20,4 +20,5 @@ executable asteroids
                      , Tick
                      , Collision
                      , Random
+                     , Animation
   default-language:    Haskell2010

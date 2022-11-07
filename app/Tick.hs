@@ -14,9 +14,9 @@ spawnAsteroids s | null (asteroids s) = s { asteroids = spawnAsteroid }--replica
                  | otherwise = s
     where
         spawnAsteroid :: [Asteroid]
-        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    $ asteroidRadius sizeBig,
-                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium $ asteroidRadius sizeMedium,
-                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  $ asteroidRadius sizeSmall]
+        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    (asteroidRadius sizeBig ) [] ,
+                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium (asteroidRadius sizeMedium) [],
+                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  (asteroidRadius sizeSmall) []]
             where
                 pickPoint      = (400,400)
                 pickDirectionB = (1,4)

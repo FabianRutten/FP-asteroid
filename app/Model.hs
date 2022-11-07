@@ -2,6 +2,7 @@
 --   which represent the state of the game
 module Model where
 
+import Animation
 import System.Random
 import Graphics.Gloss ( Point, Vector, Picture )
 import Graphics.Gloss.Data.Point.Arithmetic ( (+) )
@@ -96,10 +97,10 @@ saucersScore s = 200
 
 --initials
 initialSpace :: StdGen -> Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 0 
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 0 playerRadius) (0,1) 3 0
+initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 0 playerRadius []) (0,1) 3 0
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -109,7 +110,8 @@ data Space = MkSpace { player        :: Player
                      , gameState     :: GameState
                      , saved         :: Saved
                      , arrowkeysDown :: [Bool]
-                     , randomSeed    :: StdGen
+                     , time          :: Float
+                     , randomSeed    :: StdGen                     
                      }
 
 data Paused = Paused | Unpaused
@@ -126,7 +128,10 @@ data Entity = MkEntity { size      :: Float
                        , direction :: Vector
                        , speed     :: Float --pixels p/tick (30/s)
                        , radius    :: Float
+                       , animations :: [Animation] --only one is active at a given time
                        }
+
+
 
 newtype Saucer   = MkSaucer { entitySaucer   :: Entity}
 newtype Asteroid = MkAst    { entityAsteroid :: Entity}

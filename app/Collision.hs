@@ -64,7 +64,7 @@ spawnChildAsteroids gen a | sizeA > sizeSmall = ([a1,a2],g2)
                      (a2,g2) = spawnChildAsteroid g1 (sizeA - 0.5)
                      sizeA = size (entityAsteroid a)
                      spawnChildAsteroid :: StdGen -> Float -> (Asteroid,StdGen)
-                     spawnChildAsteroid g sizeNew = (MkAst $ MkEntity sizeNew (position (entityAsteroid a)) rdmD rdmS (asteroidRadius sizeNew),g2)
+                     spawnChildAsteroid g sizeNew = (MkAst $ MkEntity sizeNew (position (entityAsteroid a)) rdmD rdmS (asteroidRadius sizeNew) [],g2)
                         where
                       (rdmD, g1) = randomDirection g
                       (rdmS, g2) = randomSpeed g1

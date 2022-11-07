@@ -12,8 +12,10 @@ import Graphics.Gloss.Data.Vector
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
 step secs space | static space = return space                               -- do nothing if game is static
-                | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
+                | otherwise    = return . updateTick . alterPlayer . updateSecs secs $ space  -- first alter player based on movementkeys then update game
 
+updateSecs :: Float -> Space -> Space
+updateSecs secs space = space{time = time space + secs}
 
 -- | Handle user input
 input :: Event -> Space -> IO Space
@@ -28,7 +30,7 @@ saveScore s = do
     return s {saved = Saved}
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey key Down _ _) s 
+inputKey (EventKey key Down _ _) s
     | key == Char 'p' = pause s           -- pause/unpause when 'p' is pressed down
     | key == Char 'r' = restartGame s     -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
@@ -68,7 +70,7 @@ shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- on
           q = entityPlayer p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
+          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius []
 
 
 fwdPlayer :: Player -> Player

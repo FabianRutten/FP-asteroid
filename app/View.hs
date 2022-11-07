@@ -56,13 +56,16 @@ staticText p s c = translateToPosition p . scaleUniform s . color c . text
 -- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
 renderSpace :: Space -> [Picture] -> Picture
 renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
-    = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic]
+    = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic, showTime]
         where
             background   = backgroundBMP
             playerPic    = render playerBMP   (player s)
             bulletPics   = render bulletBMP   (bullets s)
             asteroidPics = render asteroidBMP (asteroids s)
             saucerPics   = render saucerBMP   (saucers s)
+            showTime = showLine (-390, 255) "Time:" (-270, 255) (time s)
+            showLine p1 s p2 f = pictures [showText p1 s, showText p2 (show f)]
+            showText p = translateToPosition p . scaleUniform 0.3 . color chartreuse . text
 renderSpace s _ = Blank -- invalid lists render nothing
 
 class Render a where

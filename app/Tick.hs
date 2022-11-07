@@ -2,21 +2,49 @@
 module Tick where
 
 import Model
+import Animation
 import Collision ( checkCollisions )
 import Graphics.Gloss.Data.Point ( Point )
 import Graphics.Gloss.Data.Vector ( mulSV )
+import Data.Maybe
+import Data.List
 
 updateTick :: Space -> Space
-updateTick =  update . spawnAsteroids . checkCollisions --updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
+updateTick =  update . spawnAsteroids . checkCollisions . checkAnimations--updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
+
+checkAnimations :: Space -> Space
+checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
+    where
+        t = time s
+        animationDone anim = running anim && not (any(\x-> timing x > t) $ aframes anim)
+        updatePlayerAnimations :: Space -> Space
+        updatePlayerAnimations s | animationDone d = s{player = rp{noKill = True, spawn = sp{running = True, aframes = setAFramesTimes t $ aframes sp}}
+                                                          }
+                                 | animationDone sp = s{player = rp}
+                                 | animationDone th = undefined
+                                 | otherwise = s
+            where
+                p = player s
+                d = death p
+                sp = spawn p
+                th = thrust p
+                rp = resetPlayer (score p) (lives p)
+
+        updateTheRestAnimations :: Space -> Space
+        updateTheRestAnimations s = s
+
+resetPlayer :: Int -> Int -> Player
+resetPlayer s l = initialPlayer{score = s, lives = l}
+
 
 spawnAsteroids :: Space -> Space
 spawnAsteroids s | null (asteroids s) = s { asteroids = spawnAsteroid }--replicate numberInWave spawnAsteroid
                  | otherwise = s
     where
         spawnAsteroid :: [Asteroid]
-        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    (asteroidRadius sizeBig ) [] ,
-                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium (asteroidRadius sizeMedium) [],
-                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  (asteroidRadius sizeSmall) []]
+        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    (asteroidRadius sizeBig ),
+                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium (asteroidRadius sizeMedium),
+                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  (asteroidRadius sizeSmall)]
             where
                 pickPoint      = (400,400)
                 pickDirectionB = (1,4)
@@ -26,11 +54,11 @@ spawnAsteroids s | null (asteroids s) = s { asteroids = spawnAsteroid }--replica
 class Update a where
     update :: a -> a
 
-instance Update a => Update [a] where 
+instance Update a => Update [a] where
     update :: Update a => [a] -> [a]
     update = map update
 
-instance Update Space where 
+instance Update Space where
     update :: Space -> Space
     update s = s { player    = update (player s)
                  , asteroids = update (asteroids s)
@@ -52,9 +80,11 @@ instance Update Entity where
 
 instance Update Player where
     update :: Player -> Player
-    update p = p {entityPlayer = (update . drag) (entityPlayer p)}
+    update p | running (death p) = p
+             | otherwise = p {entityPlayer = (update . drag) (entityPlayer p)}
         where
             drag e = e {speed = max 0 (speed e - speed e * playerDrag)}
+
 
 instance Update Asteroid where
     update :: Asteroid -> Asteroid

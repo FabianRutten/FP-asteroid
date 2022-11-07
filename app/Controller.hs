@@ -8,6 +8,7 @@ import Tick
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 import Graphics.Gloss.Data.Vector
+import Animation
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
@@ -70,7 +71,7 @@ shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- on
           q = entityPlayer p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius []
+          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
 
 
 fwdPlayer :: Player -> Player
@@ -92,8 +93,9 @@ restartGame s = initialSpace $ randomSeed s
 -- possible to hold multiple keys at the same time
 -- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
-alterPlayer s = let [left, fwd, right] = arrowkeysDown s
-                    p = player s
+alterPlayer s | running (death p)= s
+              | otherwise =
+                let [left, fwd, right] = arrowkeysDown s
                     playerLeft  | left      = rotatePlayer playerRotateSpeed p
                                 | otherwise = p
                     playerRight | right     = rotatePlayer (-playerRotateSpeed) playerLeft
@@ -101,3 +103,5 @@ alterPlayer s = let [left, fwd, right] = arrowkeysDown s
                     playerFwd   | fwd       = fwdPlayer playerRight
                                 | otherwise = playerRight
                 in s {player = playerFwd}
+            where
+                p = player s

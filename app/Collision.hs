@@ -6,14 +6,16 @@ import Data.Maybe
 import Graphics.Gloss.Data.Point
 import Graphics.Gloss.Data.Vector
 import System.Random (StdGen)
+import Animation
 
 
 checkCollisions :: Space -> Space
 checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
 
 asteroidsCollisionsWithPlayer :: Space -> Space
-asteroidsCollisionsWithPlayer s | isNothing hit = s
-                                | otherwise = checkLives s {player = resetPlayer (score p + asteroidScore (fromJust hit)) (lives p), asteroids = left, randomSeed = seed}
+asteroidsCollisionsWithPlayer s | noKill p = s
+                                | isNothing hit = s
+                                | otherwise = checkLives s {player = playerDeath (time s) p{score = score p + asteroidScore (fromJust hit)}, asteroids = left, randomSeed = seed}
                              where
                                 p = player s
                                 (left,hit,seed) = asteroidEntityHit (randomSeed s) (entityPlayer $ player s) (asteroids s)
@@ -21,6 +23,12 @@ checkLives :: Space -> Space
 checkLives s | (lives . player) s == 0 = gameOver s
              | otherwise = s
 
+playerDeath :: Float -> Player -> Player
+playerDeath secs p = p{death = d{running = True, aframes = setAFramesTimes secs $ aframes d}
+                      , lives = max 0 (lives p - 1)
+                      , noKill = True}
+                 where
+                  d = death p
 
 
 bulletsWithAsteroids :: Space -> Space
@@ -64,7 +72,7 @@ spawnChildAsteroids gen a | sizeA > sizeSmall = ([a1,a2],g2)
                      (a2,g2) = spawnChildAsteroid g1 (sizeA - 0.5)
                      sizeA = size (entityAsteroid a)
                      spawnChildAsteroid :: StdGen -> Float -> (Asteroid,StdGen)
-                     spawnChildAsteroid g sizeNew = (MkAst $ MkEntity sizeNew (position (entityAsteroid a)) rdmD rdmS (asteroidRadius sizeNew) [],g2)
+                     spawnChildAsteroid g sizeNew = (MkAst $ MkEntity sizeNew (position (entityAsteroid a)) rdmD rdmS (asteroidRadius sizeNew),g2)
                         where
                       (rdmD, g1) = randomDirection g
                       (rdmS, g2) = randomSpeed g1
@@ -81,8 +89,7 @@ distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
       y' = y1 - y2
 
 
-resetPlayer :: Int -> Int -> Player
-resetPlayer s l = initialPlayer{lives = l -1, score = s}
+
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

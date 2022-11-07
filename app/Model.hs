@@ -100,7 +100,15 @@ initialSpace :: StdGen -> Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 0 
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 0 playerRadius []) (0,1) 3 0
+initialPlayer = MkPlayer 
+                    (MkEntity 0.5 (0,0) (0,1) 0 playerRadius) 
+                    (0,1)
+                    3 
+                    0 
+                    False 
+                    playerDeathAnimation 
+                    playerSpawnAnimation
+                    playerThrustAnimation
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -128,7 +136,6 @@ data Entity = MkEntity { size      :: Float
                        , direction :: Vector
                        , speed     :: Float --pixels p/tick (30/s)
                        , radius    :: Float
-                       , animations :: [Animation] --only one is active at a given time
                        }
 
 
@@ -145,4 +152,10 @@ data Player = MkPlayer { entityPlayer :: Entity
                        , orientation  :: Vector
                        , lives        :: Int
                        , score        :: Int
+                       , noKill       :: Bool
+                       , death        :: Animation
+                       , spawn        :: Animation
+                       , thrust       :: Animation
                        }
+
+

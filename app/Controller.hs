@@ -8,12 +8,15 @@ import Tick
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 import Graphics.Gloss.Data.Vector
+import Animation
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
 step secs space | static space = return space                               -- do nothing if game is static
-                | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
+                | otherwise    = return . updateTick . alterPlayer . updateSecs secs $ space  -- first alter player based on movementkeys then update game
 
+updateSecs :: Float -> Space -> Space
+updateSecs secs space = space{time = time space + secs}
 
 -- | Handle user input
 input :: Event -> Space -> IO Space
@@ -28,7 +31,7 @@ saveScore s = do
     return s {saved = Saved}
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey key Down _ _) s 
+inputKey (EventKey key Down _ _) s
     | key == Char 'p' = pause s           -- pause/unpause when 'p' is pressed down
     | key == Char 'r' = restartGame s     -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
@@ -90,8 +93,10 @@ restartGame s = initialSpace $ randomSeed s
 -- possible to hold multiple keys at the same time
 -- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
-alterPlayer s = s {player = alterPlayer' (player s)}
+alterPlayer s | running (death p) = s
+              | otherwise         = s {player = alterPlayer' p}
     where
+        p = player s
         [left, fwd, right] = arrowkeysDown s
         newP b f = if b then f else id
     

@@ -2,6 +2,7 @@
 --   which represent the state of the game
 module Model where
 
+import Animation
 import System.Random
 import Graphics.Gloss ( Point, Vector, Picture )
 import Graphics.Gloss.Data.Point.Arithmetic ( (+) )
@@ -96,10 +97,18 @@ saucersScore s = 200
 
 --initials
 initialSpace :: StdGen -> Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False)
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 0 
 
 initialPlayer :: Player
-initialPlayer = MkPlayer (MkEntity 0.5 (0,0) (0,1) 0 playerRadius) (0,1) 3 0
+initialPlayer = MkPlayer 
+                    (MkEntity 0.5 (0,0) (0,1) 0 playerRadius) 
+                    (0,1)
+                    3 
+                    0 
+                    False 
+                    playerDeathAnimation 
+                    playerSpawnAnimation
+                    playerThrustAnimation
 
 data Space = MkSpace { player        :: Player
                      , asteroids     :: [Asteroid]
@@ -109,7 +118,8 @@ data Space = MkSpace { player        :: Player
                      , gameState     :: GameState
                      , saved         :: Saved
                      , arrowkeysDown :: [Bool]
-                     , randomSeed    :: StdGen
+                     , time          :: Float
+                     , randomSeed    :: StdGen                     
                      }
 
 data Paused = Paused | Unpaused
@@ -128,6 +138,8 @@ data Entity = MkEntity { size      :: Float
                        , radius    :: Float
                        }
 
+
+
 newtype Saucer   = MkSaucer { entitySaucer   :: Entity}
 newtype Asteroid = MkAst    { entityAsteroid :: Entity}
 
@@ -140,4 +152,10 @@ data Player = MkPlayer { entityPlayer :: Entity
                        , orientation  :: Vector
                        , lives        :: Int
                        , score        :: Int
+                       , noKill       :: Bool
+                       , death        :: Animation
+                       , spawn        :: Animation
+                       , thrust       :: Animation
                        }
+
+

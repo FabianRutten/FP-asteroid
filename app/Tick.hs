@@ -20,7 +20,7 @@ checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
         updatePlayerAnimations :: Space -> Space
         updatePlayerAnimations s | animationDone d = s{player = rp{noKill = True, spawn = sp{running = True, aframes = setAFramesTimes t $ aframes sp}}
                                                           }
-                                 | animationDone sp = s{player = rp}
+                                 | animationDone sp = s{player = p{noKill = False, spawn = sp{running = False}}}
                                  | animationDone th = undefined
                                  | otherwise = s
             where

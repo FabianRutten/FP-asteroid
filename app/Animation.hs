@@ -29,7 +29,7 @@ playerDeathFrames :: [AFrame]
 playerDeathFrames = playerDeathFrames' [f0]
     where
         f (p,t) = MkAFrame (color white $ pictures p) t
-        f0 = (pics, 0.3)
+        f0 = (pics, 0.2)
         pics = [l1,l2,l3]
         playerDeathFrames' :: [([Picture],Float)] -> [AFrame]
         playerDeathFrames' [] = []
@@ -37,16 +37,16 @@ playerDeathFrames = playerDeathFrames' [f0]
                             | otherwise = playerDeathFrames' (translateFrame x : (x:xs))
         --playerDeathFrames code
         l1 :: Picture
-        l1 = line [(-5,-5),(0,5)]
+        l1 = line [(-25,-25),(0,25)]
         l2 :: Picture
-        l2 = line [(5,-5),(0,5)]
+        l2 = line [(25,-25),(0,25)]
         l3 :: Picture
-        l3 = line [(-3,-3),(3,-3)]
+        l3 = line [(-15,-15),(15,-15)]
         translateFrame :: ([Picture],Float) -> ([Picture],Float)
         translateFrame ([g1,g2,g3],x) = ([translate (-3) 3 g1
                                         , translate 3 3 g2
                                         , translate 0 (-4) g3]
-                                       , x + 0.3)
+                                       , x + 0.2)
 
 setAFramesTimes :: Float -> [AFrame] -> [AFrame]
 setAFramesTimes f = map (\x-> x{timing = timing x + f})

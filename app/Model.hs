@@ -152,7 +152,7 @@ data Player = MkPlayer { entityPlayer :: Entity
                        , orientation  :: Vector
                        , lives        :: Int
                        , score        :: Int
-                       , noKill       :: Bool
+                       , invincible   :: Bool
                        , death        :: Animation
                        , spawn        :: Animation
                        , thrust       :: Animation

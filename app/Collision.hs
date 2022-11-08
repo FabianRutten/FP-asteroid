@@ -13,7 +13,7 @@ checkCollisions :: Space -> Space
 checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
 
 asteroidsCollisionsWithPlayer :: Space -> Space
-asteroidsCollisionsWithPlayer s | noKill p = s
+asteroidsCollisionsWithPlayer s | invincible p = s
                                 | isNothing hit = s
                                 | otherwise = checkLives s {player = playerDeath (time s) p{score = score p + asteroidScore (fromJust hit)}, asteroids = left, randomSeed = seed}
                              where
@@ -26,7 +26,7 @@ checkLives s | (lives . player) s == 0 = gameOver s
 playerDeath :: Float -> Player -> Player
 playerDeath secs p = p{death = d{running = True, aframes = setAFramesTimes secs $ aframes d}
                       , lives = max 0 (lives p - 1)
-                      , noKill = True}
+                      , invincible = True}
                  where
                   d = death p
 

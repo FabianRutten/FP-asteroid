@@ -34,7 +34,7 @@ playerDeathFrames = playerDeathFrames' [f0]
         playerDeathFrames' :: [([Picture],Float)] -> [AFrame]
         playerDeathFrames' [] = []
         playerDeathFrames' (x:xs) | length xs == 4 = map f $ reverse (x:xs)
-                            | otherwise = playerDeathFrames' (translateFrame x : (x:xs))
+                                  | otherwise = playerDeathFrames' (translateFrame x : (x:xs))
         --playerDeathFrames code
         l1 :: Picture
         l1 = line [(-25,-25),(0,25)]

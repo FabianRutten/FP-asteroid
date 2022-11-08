@@ -18,9 +18,9 @@ checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
         t = time s
         animationDone anim = running anim && not (any(\x-> timing x > t) $ aframes anim)
         updatePlayerAnimations :: Space -> Space
-        updatePlayerAnimations s | animationDone d = s{player = rp{noKill = True, spawn = sp{running = True, aframes = setAFramesTimes t $ aframes sp}}
+        updatePlayerAnimations s | animationDone d = s{player = rp{invincible = True, spawn = sp{running = True, aframes = setAFramesTimes t $ aframes sp}}
                                                           }
-                                 | animationDone sp = s{player = p{noKill = False, spawn = sp{running = False}}}
+                                 | animationDone sp = s{player = p{invincible = False, spawn = sp{running = False}}}
                                  | animationDone th = undefined
                                  | otherwise = s
             where

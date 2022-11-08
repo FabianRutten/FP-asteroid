@@ -3,7 +3,7 @@
 --   the game state into a picture
 module View where
 
-import Graphics.Gloss
+import Graphics.Gloss hiding (animate)
 import Graphics.Gloss.Data.Vector
 import Model
 import Animation
@@ -22,7 +22,7 @@ viewPure s | gameState s == GameOver = viewGameOver s
            | otherwise               = viewPlaying s
 
 viewGameOver :: Space -> [Picture] -> Picture
-viewGameOver s bmps = pictures [head bmps, animation (time s) (last bmps) (player s), gameOverText, restartText, savedText]
+viewGameOver s bmps = pictures [renderSpace s bmps, gameOverText, restartText, savedText]
     where
         gameOverText = staticText (-395, -20) 1   red     "GAME OVER"
         restartText  = staticText (-250, -70) 0.3 magenta "Press \"R\" to restart game"
@@ -62,7 +62,7 @@ renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
     = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic, showTime]
         where
             background   = backgroundBMP
-            playerPic    = animation (time s) playerBMP   (player s)
+            playerPic    = animate (time s) playerBMP   (player s)
             bulletPics   = render             bulletBMP   (bullets s)
             asteroidPics = render             asteroidBMP (asteroids s)
             saucerPics   = render             saucerBMP   (saucers s)
@@ -123,12 +123,12 @@ apicture f anims = pictures $ map (frame f) anims
                             mFrame = find (\x-> timing x > f) (aframes a)
 
 class Renderable a => Animatable a where
-    animation :: Float -> Picture -> a -> Picture
+    animate :: Float -> Picture -> a -> Picture
 
 instance Animatable Player where
-    animation :: Float -> Picture -> Player -> Picture
-    animation secs bmp p | null animations = render bmp p
-                         | otherwise = render (apicture secs animations) p
+    animate :: Float -> Picture -> Player -> Picture
+    animate secs bmp p | null animations = render bmp p
+                       | otherwise = render (apicture secs animations) p
         where
             animations :: [Animation]
             animations = filter running [death p, spawn p, thrust p]

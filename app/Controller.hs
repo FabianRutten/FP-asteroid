@@ -64,23 +64,21 @@ pause s | paused s == Paused = s {paused = Unpaused}
         | otherwise          = s {paused = Paused}
 
 shootPlayer :: KeyState -> Space -> Space
-shootPlayer state s | state == Down = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
-                    | otherwise     = s
+shootPlayer Down s = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
       where
           p = player s
           q = entityPlayer p
           startPoint = position q `addPoint` mulSV (size q) (direction q)
           newBullet = MkBullet newProjectile True 0
           newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
+shootPlayer _ s = s
 
 
 fwdPlayer :: Player -> Player
-fwdPlayer p = p {entityPlayer = q {direction = normalizeV newMovementV, speed = magV newMovementV}}
+fwdPlayer p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}}
             where
               q = entityPlayer p
-              movementV = mulSV (speed q) (direction q)
-              thrustV = mulSV playerThrust (orientation p)
-              newMovementV = movementV `addPoint` thrustV
+              movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
 
 
 rotatePlayer :: Float -> Player -> Player

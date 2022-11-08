@@ -47,6 +47,7 @@ playerDeathFrames = playerDeathFrames' [f0]
                                         , translate 3 3 g2
                                         , translate 0 (-4) g3]
                                        , x + 0.2)
+        translateFrame _ = ([], 0)
 
 setAFramesTimes :: Float -> [AFrame] -> [AFrame]
 setAFramesTimes f = map (\x-> x{timing = timing x + f})

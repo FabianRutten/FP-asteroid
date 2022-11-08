@@ -22,7 +22,7 @@ viewPure s | gameState s == GameOver = viewGameOver s
            | otherwise               = viewPlaying s
 
 viewGameOver :: Space -> [Picture] -> Picture
-viewGameOver s bmps = pictures [head bmps, render (time s) (last bmps) (player s), gameOverText, restartText, savedText]
+viewGameOver s bmps = pictures [head bmps, animation (time s) (last bmps) (player s), gameOverText, restartText, savedText]
     where
         gameOverText = staticText (-395, -20) 1   red     "GAME OVER"
         restartText  = staticText (-250, -70) 0.3 magenta "Press \"R\" to restart game"
@@ -62,38 +62,34 @@ renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
     = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic, showTime]
         where
             background   = backgroundBMP
-            playerPic    = render (time s) playerBMP   (player s)
-            bulletPics   = render (time s) bulletBMP   (bullets s)
-            asteroidPics = render (time s) asteroidBMP (asteroids s)
-            saucerPics   = render (time s) saucerBMP   (saucers s)
+            playerPic    = animation (time s) playerBMP   (player s)
+            bulletPics   = render             bulletBMP   (bullets s)
+            asteroidPics = render             asteroidBMP (asteroids s)
+            saucerPics   = render             saucerBMP   (saucers s)
             showTime = showLine (-390, 255) "Time:" (-270, 255) (time s)
             showLine p1 s p2 f = pictures [showText p1 s, showText p2 (show f)]
-            showText p = translateToPosition p . scaleUniform 0.3 . color chartreuse . text
+            showText p = staticText p 0.3 chartreuse
 renderSpace s _ = Blank -- invalid lists render nothing
 
-class Render a where
-    render :: Float -> Picture -> a -> Picture
+class Renderable a where
+    render :: Picture -> a -> Picture
 
-instance Render a => Render [a] where
-    render :: Render a => Float -> Picture -> [a] -> Picture
-    render secs bmp = pictures . map (render secs bmp)
+instance Renderable a => Renderable [a] where
+    render :: Renderable a => Picture -> [a] -> Picture
+    render bmp = pictures . map (render bmp)
 
-instance Render Entity where
-    render :: Float -> Picture -> Entity -> Picture
-    render secs bmp e = pictures [transRotScale (position e) (direction e) (size e) bmp, debug]
+instance Renderable Entity where
+    render :: Picture -> Entity -> Picture
+    render bmp e = pictures [transRotScale (position e) (direction e) (size e) bmp, debug]
         where
             debug = Blank --(transRotScale (position e) (direction e) 0.3 . color red . text . show . position) e
 
 
 -- All instances to turn one of the attributes of the space into a picture
-instance Render Player where
-    render :: Float -> Picture -> Player -> Picture
-    render secs bmp p | null animations = pictures [transRotScale (position e) (orientation p) (size e) bmp, showLives, showScore, debug]
-                      | otherwise = pictures [transRotScale (position e) (orientation p) (size e) $ apicture secs animations, showLives, showScore, debug]
+instance Renderable Player where
+    render :: Picture -> Player -> Picture
+    render bmp p = pictures [transRotScale (position e) (orientation p) (size e) bmp, showLives, showScore, debug]
         where
-            animations :: [Animation]
-            animations = filter running [death p, spawn p, thrust p]           
-
             e = entityPlayer p
 
             showScore = showLine (-390, 350) "Score:" (-270, 350)  score
@@ -104,17 +100,17 @@ instance Render Player where
            
             debug = (transRotScale (position e) (orientation p) 0.3 . color red . text . show . running . death) p
 
-instance Render Asteroid where
-    render :: Float -> Picture -> Asteroid -> Picture
-    render secs bmp a = render secs bmp (entityAsteroid a)
+instance Renderable Asteroid where
+    render :: Picture -> Asteroid -> Picture
+    render bmp a = render bmp (entityAsteroid a)
 
-instance Render Saucer where
-    render :: Float -> Picture -> Saucer -> Picture
-    render secs bmp s = render secs bmp (entitySaucer s)
+instance Renderable Saucer where
+    render :: Picture -> Saucer -> Picture
+    render bmp s = render bmp (entitySaucer s)
 
-instance Render Bullet where
-    render :: Float -> Picture -> Bullet -> Picture
-    render secs bmp b =  render secs bmp (entityBullet b)
+instance Renderable Bullet where
+    render :: Picture -> Bullet -> Picture
+    render bmp b =  render bmp (entityBullet b)
 
 apicture :: Float -> [Animation] -> Picture
 apicture f anims = pictures $ map (frame f) anims
@@ -125,3 +121,14 @@ apicture f anims = pictures $ map (frame f) anims
                         where
                             mFrame :: Maybe AFrame
                             mFrame = find (\x-> timing x > f) (aframes a)
+
+class Renderable a => Animatable a where
+    animation :: Float -> Picture -> a -> Picture
+
+instance Animatable Player where
+    animation :: Float -> Picture -> Player -> Picture
+    animation secs bmp p | null animations = render bmp p
+                         | otherwise = render (apicture secs animations) p
+        where
+            animations :: [Animation]
+            animations = filter running [death p, spawn p, thrust p]

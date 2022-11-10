@@ -5,36 +5,26 @@ import Graphics.Gloss.Data.Picture
 
 
 data Animation = MkAnimation { running :: Bool
-                             , aframes :: [AFrame]} --only one animation active at a time
-
-data AType = Death | Spawn | Thrust
-    deriving (Eq, Show)
-
-data AFrame = MkAFrame { picture :: Picture
-                       , timing :: Float}   --timing < time space -> render Frame 
+                             , frameFunc :: Float -> Picture -> Picture
+                             , startTime :: Float} --only one animation active at a time
 
 playerSpawnAnimation :: Animation
-playerSpawnAnimation = MkAnimation False playerSpawnFrames
+playerSpawnAnimation = MkAnimation True playerSpawnFunc 0
+
+playerSpawnFunc :: Float -> Picture -> Picture
+playerSpawnFunc = undefined
 
 playerThrustAnimation :: Animation
-playerThrustAnimation = playerSpawnAnimation
+playerThrustAnimation = MkAnimation False playerThrustFunc 0
 
-playerSpawnFrames :: [AFrame]
-playerSpawnFrames = playerDeathFrames
+playerThrustFunc :: Float -> Picture -> Picture
+playerThrustFunc = undefined
 
 playerDeathAnimation :: Animation
-playerDeathAnimation = MkAnimation False playerDeathFrames
+playerDeathAnimation = MkAnimation False playerDeathFunc 0
 
-playerDeathFrames :: [AFrame]
-playerDeathFrames = playerDeathFrames' [f0]
-    where
-        f (p,t) = MkAFrame (color white $ pictures p) t
-        f0 = (pics, 0.2)
-        pics = [l1,l2,l3]
-        playerDeathFrames' :: [([Picture],Float)] -> [AFrame]
-        playerDeathFrames' [] = []
-        playerDeathFrames' (x:xs) | length xs == 4 = map f $ reverse (x:xs)
-                                  | otherwise = playerDeathFrames' (translateFrame x : (x:xs))
+playerDeathFunc :: Float -> Picture -> Picture
+playerDeathFunc f p = 
         --playerDeathFrames code
         l1 :: Picture
         l1 = line [(-25,-25),(0,25)]
@@ -49,5 +39,5 @@ playerDeathFrames = playerDeathFrames' [f0]
                                        , x + 0.2)
         translateFrame _ = ([], 0)
 
-setAFramesTimes :: Float -> [AFrame] -> [AFrame]
-setAFramesTimes f = map (\x-> x{timing = timing x + f})
+activateAnimation :: Float -> Animation -> Animation
+activateAnimation f a = a{running = True, startTime = f}

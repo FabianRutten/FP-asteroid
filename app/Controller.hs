@@ -13,15 +13,12 @@ import Animation
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
 step secs space | static space = return space                               -- do nothing if game is static
-                | otherwise    = return . updateTick . alterPlayer . updateSecs secs $ space  -- first alter player based on movementkeys then update game
-
-updateSecs :: Float -> Space -> Space
-updateSecs secs space = space{time = time space + secs}
+                | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
 
 -- | Handle user input
 input :: Event -> Space -> IO Space
 -- impure save to file when player presses 's' after game is over
-input (EventKey (Char 's') Down _ _) space@MkSpace {gameState = GameOver, saved = Unsaved} = saveScore space
+input (EventKey (Char 's') Down _ _) space@MkSpace{gameState = GameOver, saved = Unsaved} = saveScore space
 -- handle all other input in pure function
 input e space = return (inputKey e space)
 
@@ -31,9 +28,9 @@ saveScore s = do
     return s {saved = Saved}
 
 inputKey :: Event -> Space -> Space
-inputKey (EventKey key Down _ _) s
-    | key == Char 'p' = pause s           -- pause/unpause when 'p' is pressed down
-    | key == Char 'r' = restartGame s     -- restart game
+inputKey (EventKey (Char key) Down _ _) s
+    | key == 'p' = pause s                -- pause/unpause when 'p' is pressed down
+    | key == 'r' = restartGame s          -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
     | static s  = s                       -- do nothing if game is static
     | otherwise = case sk of

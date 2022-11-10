@@ -19,7 +19,7 @@ main = do
     let bmps = [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
     playIO (InWindow "Asteroids" (screensize, screensize) (300, 100))
               black              -- Background color
-              30                 -- Frames per second
+              frameRate          -- Frames per second
               (initialSpace gen) -- Initial state
               (view bmps)        -- View function
               input              -- Event function

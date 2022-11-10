@@ -12,6 +12,8 @@ addPoint :: Point -> Point -> Point
 addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
 
 --application wide constants
+frameRate :: Int
+frameRate = 30
 
 --screen
 screensize :: Int

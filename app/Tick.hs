@@ -64,6 +64,7 @@ instance Update Space where
                  , asteroids = update (asteroids s)
                  , saucers   = update (saucers s)
                  , bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
+                 , time      = time s + 1 / fromIntegral frameRate
                  }
 
 instance Update Entity where

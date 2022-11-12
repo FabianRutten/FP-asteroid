@@ -18,7 +18,7 @@ randomLocation gen = (point, newgen)
 
 
 randomDirection :: StdGen -> (Vector, StdGen)
-randomDirection gen = ((outputx, ouputy),newSeed)
+randomDirection gen = (normalizeV (outputx, ouputy),newSeed)
     where
         (outputx, seed) = randomR (-1.0,1.0) gen
         (ouputy, newSeed) = randomR (-1.0,1.0) seed

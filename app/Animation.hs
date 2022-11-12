@@ -17,7 +17,7 @@ playerSpawnFunc :: Float -> Float -> Picture -> Picture
 playerSpawnFunc st secs bmp | left >= 0.1 = Blank
                             | otherwise = bmp
     where
-        left = secs - st `mod'` 0.2
+        left = (secs - st) `mod'` 0.2
 
 
 playerThrustAnimation :: Animation

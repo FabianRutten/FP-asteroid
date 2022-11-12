@@ -59,7 +59,7 @@ asteroidEntityHit gen e as = asteroidEntityHit' e as ([],Nothing,gen)
               where
         asteroidEntityHit' :: Entity -> [Asteroid] -> ([Asteroid], Maybe Asteroid,StdGen) -> ([Asteroid], Maybe Asteroid,StdGen)
         asteroidEntityHit' _ [] hit = hit
-        asteroidEntityHit' e (a:as) (left,_,g0)| checkHit e (entityAsteroid a) = (left++as++childAsts, Just a, seed)
+        asteroidEntityHit' e (a:as) (left,_,g0) | checkHit e (entityAsteroid a) = (left++as++childAsts, Just a, seed)
                                                 | otherwise = asteroidEntityHit' e as (a:left, Nothing, seed)
                                     where
                                         (childAsts, seed) = spawnChildAsteroids g0 a
@@ -82,11 +82,7 @@ spawnChildAsteroids gen a | sizeA > sizeSmall = ([a1,a2],g2)
 checkHit :: Entity -> Entity -> Bool
 checkHit a b = distance2P (position a) (position b) <= (radius a + radius b)
 
-distance2P :: Point -> Point -> Float
-distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
-    where
-      x' = x1 - x2
-      y' = y1 - y2
+
 
 
 

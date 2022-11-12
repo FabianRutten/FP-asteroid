@@ -22,7 +22,7 @@ checkAnimations s = updatePlayerAnimations s
         updatePlayerAnimations :: Space -> Space
         updatePlayerAnimations s | animationDone d = s{player = rp{invincible = True, spawn = activateAnimation t sp}}
                                  | animationDone sp = s{player = p{invincible = False, spawn = sp{running = False}}}
-                                 | animationDone th = undefined
+                                 | animationDone th = s{player = p{thrust = th{running = False}}}
                                  | otherwise = s
             where            
                 p = player s

@@ -71,11 +71,11 @@ shootPlayer Down s = s {bullets = newBullet : bullets  s} -- only shoot when spa
 shootPlayer _ s = s
 
 
-fwdPlayer :: Player -> Player
-fwdPlayer p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}}
-            where
-              q = entityPlayer p
-              movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
+fwdPlayer :: Float -> Player -> Player
+fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}}
+    where
+      q = entityPlayer p
+      movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
 
 
 rotatePlayer :: Float -> Player -> Player
@@ -91,9 +91,10 @@ alterPlayer :: Space -> Space
 alterPlayer s | running (death p) = s
               | otherwise         = s {player = alterPlayer' p}
     where
+        t = time s 
         p = player s
         [left, fwd, right] = arrowkeysDown s
         newP b f = if b then f else id
     
         alterPlayer' :: Player -> Player
-        alterPlayer' = newP fwd fwdPlayer . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)
+        alterPlayer' = newP fwd (fwdPlayer t) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)

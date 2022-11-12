@@ -5,11 +5,14 @@ module Model where
 import Animation
 import System.Random
 import Graphics.Gloss ( Point, Vector, Picture )
-import Graphics.Gloss.Data.Point.Arithmetic ( (+) )
+import qualified Graphics.Gloss.Data.Point.Arithmetic as PA ( (+), (-))
 import System.Random.Stateful (STGen)
 
 addPoint :: Point -> Point -> Point
-addPoint a b = a Graphics.Gloss.Data.Point.Arithmetic.+ b
+addPoint a b = a PA.+ b
+
+minPoint :: Point -> Point -> Point
+minPoint a b = a PA.- b
 
 --application wide constants
 frameRate :: Int
@@ -171,3 +174,8 @@ data Player = MkPlayer { entityPlayer :: Entity
                        }
 
 
+distance2P :: Point -> Point -> Float
+distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' Prelude.+ y'*y')
+    where
+      x' = x1 - x2
+      y' = y1 - y2

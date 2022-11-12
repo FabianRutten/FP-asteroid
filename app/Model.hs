@@ -99,7 +99,7 @@ saucersScore s = 200
 
 --initials
 initialSpace :: StdGen -> Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 0 
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 1 
 
 initialPlayer :: Player
 initialPlayer = MkPlayer 

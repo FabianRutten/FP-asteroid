@@ -118,7 +118,7 @@ instance Renderable Player where
             showLine p1 s p2 f = pictures [showText p1 s, showText p2 (show (f p))]
             showText p = staticText p 0.3 chartreuse
            
-            debug = (transRotScale (position e) (orientation p) 0.3 . color red . text . show . running . death) p
+            debug = (transRotScale (position e) (orientation p) 0.3 . color red . text . show . startTime . death) p
 
 instance Renderable Asteroid where
     render :: Picture -> Asteroid -> Picture
@@ -132,23 +132,14 @@ instance Renderable Bullet where
     render :: Picture -> Bullet -> Picture
     render bmp b =  render bmp (entityBullet b)
 
-apicture :: Float -> [Animation] -> Picture
-apicture f anims = pictures $ map (frame f) anims
-          where
-            frame :: Float -> Animation -> Picture
-            frame f a | isNothing mFrame = Blank
-                      | otherwise = picture $ fromJust mFrame
-                        where
-                            mFrame :: Maybe AFrame
-                            mFrame = find (\x-> timing x > f) (aframes a)
-
 class Renderable a => Animatable a where
     animate :: Float -> Picture -> a -> Picture
 
 instance Animatable Player where
     animate :: Float -> Picture -> Player -> Picture
     animate secs bmp p | null animations = render bmp p
-                       | otherwise = render (apicture secs animations) p
+                       | otherwise = render (color white $ pictures $ map (\x -> frameFunc x (st x) secs bmp) animations) p
         where
+            st = startTime
             animations :: [Animation]
             animations = filter running [death p, spawn p, thrust p]

@@ -72,7 +72,7 @@ shootPlayer _ s = s
 
 
 fwdPlayer :: Float -> Player -> Player
-fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}}
+fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}, thrust = activateAnimation time (thrust p)}
     where
       q = entityPlayer p
       movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
@@ -91,10 +91,10 @@ alterPlayer :: Space -> Space
 alterPlayer s | running (death p) = s
               | otherwise         = s {player = alterPlayer' p}
     where
-        t = time s 
+        t = time s
         p = player s
         [left, fwd, right] = arrowkeysDown s
         newP b f = if b then f else id
-    
+
         alterPlayer' :: Player -> Player
         alterPlayer' = newP fwd (fwdPlayer t) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)

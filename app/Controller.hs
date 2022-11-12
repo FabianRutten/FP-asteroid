@@ -72,10 +72,12 @@ shootPlayer _ s = s
 
 
 fwdPlayer :: Float -> Player -> Player
-fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}, thrust = activateAnimation time (thrust p)}
+fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}, thrust = th}
     where
       q = entityPlayer p
       movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
+      th | running $ thrust p = th
+         | otherwise = activateAnimation time (thrust p)
 
 
 rotatePlayer :: Float -> Player -> Player

@@ -12,6 +12,7 @@ executable asteroids
   build-depends:       base >= 4 && < 5,
                        gloss,
                        random,
+                       directory,
                        Cabal
   hs-source-dirs:      app
   other-modules:       Controller

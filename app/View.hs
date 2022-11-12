@@ -8,27 +8,50 @@ import Graphics.Gloss.Data.Vector
 import Model
 import Animation
 import Graphics.Gloss.Geometry.Angle (radToDeg)
-import Data.List (find)
+import Data.List (find, sort)
 import Data.Maybe (isNothing, fromJust)
+import System.Directory (doesFileExist)
 
--- load all bitmaps and call pure function
 view :: [Picture] -> Space -> IO Picture
-view bmps s = return $ viewPure s bmps
+view bmps s | gameState s == GameOver = viewGameOver s bmps
+            | otherwise               = return $ viewPure s bmps
+
+-- load and show highest scores
+viewGameOver :: Space -> [Picture] -> IO Picture
+viewGameOver s bmps = do
+    highscore <- highscoreString
+    let
+        highscoreText = staticText (-290, 110)  0.4 aquamarine highscore
+        gameOverText  = staticText (-395, -20)  1   red        "GAME OVER"
+        restartText   = staticText (-250, -70)  0.3 magenta    "Press \"R\" to restart game"
+        savedText     = staticText savedPoint   0.3 azure      savedString
+        (savedPoint, savedString) | saved s == Unsaved = ((-240, -120), "Press \"S\" to save score")
+                                  | otherwise          = ((-300, -120), "Succesfully saved score to file!")
+    return $ pictures [renderSpace s bmps, gameOverText, restartText, savedText, highscoreText]
+
+-- read all scores from file, get the highest and put it in a string, if there is no high score give empty string
+highscoreString :: IO String
+highscoreString = do
+    file <- safeReadFile "highscores.txt"
+    let scores = (reverse . sort . map (read . last . words)) (lines file)
+    return $ highscoreString' scores
+    where
+        highscoreString' :: [Int] -> String
+        highscoreString' []    = ""
+        highscoreString' (x:_) = "Current Highscore: " ++ show x
+
+        -- return content of file and if it doesn't exist return an empty string
+        safeReadFile :: FilePath -> IO String
+        safeReadFile fp = do
+            exists <- doesFileExist fp
+            let content | exists    = readFile fp
+                        | otherwise = return ""
+            content
 
 -- choose correct view function based on the state of the game
 viewPure :: Space -> [Picture] -> Picture
-viewPure s | gameState s == GameOver = viewGameOver s
-           | paused s    == Paused   = viewPaused s
+viewPure s | paused s    == Paused   = viewPaused s
            | otherwise               = viewPlaying s
-
-viewGameOver :: Space -> [Picture] -> Picture
-viewGameOver s bmps = pictures [renderSpace s bmps, gameOverText, restartText, savedText]
-    where
-        gameOverText = staticText (-395, -20) 1   red     "GAME OVER"
-        restartText  = staticText (-250, -70) 0.3 magenta "Press \"R\" to restart game"
-        savedText    = staticText savedPoint  0.3 azure   savedString
-        (savedPoint, savedString) | saved s == Unsaved = ((-240, -120), "Press \"S\" to save score")
-                                  | otherwise          = ((-300, -120), "Succesfully saved score to file!")
 
 viewPaused :: Space -> [Picture] -> Picture
 viewPaused s bmps = pictures [renderSpace s bmps, staticText (-240, -20) 1 red "PAUSED"]

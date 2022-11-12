@@ -22,4 +22,5 @@ executable asteroids
                      , Collision
                      , Random
                      , Animation
+                     , Saucer
   default-language:    Haskell2010

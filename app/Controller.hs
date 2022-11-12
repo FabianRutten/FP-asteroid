@@ -76,7 +76,7 @@ fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed 
     where
       q = entityPlayer p
       movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
-      th | running $ thrust p = th
+      th | running $ thrust p = thrust p
          | otherwise = activateAnimation time (thrust p)
 
 

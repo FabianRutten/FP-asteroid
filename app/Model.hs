@@ -48,8 +48,13 @@ bulletSize :: Float
 bulletSize = 0.5
 
 --asteroid
-numberInWave :: Int
-numberInWave = 1
+    --amount of asteroids to spawn based on the score of the player
+numberInWave :: Int -> Int
+numberInWave score | score >= 9000 = 10
+                   | score >= 3000 = 5
+                   | score >= 2200 = 4
+                   | score >= 550  = 3
+                   | otherwise     = 2
 
     --sizes
 sizeBig :: Float
@@ -58,7 +63,7 @@ sizeMedium :: Float
 sizeMedium = 1
 sizeSmall :: Float
 sizeSmall = 0.5
-    --speeds
+    --speed ranges
 speedBig :: (Float, Float)
 speedBig = (0.5, 5)
 speedMedium :: (Float, Float)

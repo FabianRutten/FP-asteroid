@@ -21,7 +21,7 @@ playerSpawnFunc st secs bmp | left >= 0.1 = Blank
 
 
 playerThrustAnimation :: Animation
-playerThrustAnimation = MkAnimation False playerThrustFunc 0 0.1
+playerThrustAnimation = MkAnimation False playerThrustFunc 0 10
 
 playerThrustFunc :: Float -> Float -> Picture -> Picture
 playerThrustFunc st secs bmp = pictures [bmp, thrustBMP]

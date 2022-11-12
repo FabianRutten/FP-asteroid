@@ -37,7 +37,6 @@ resetPlayer s l = initialPlayer{score = s, lives = l}
 
 spawnAsteroids :: Space -> Space
 spawnAsteroids s@MkSpace{asteroids = []} = s { asteroids = ast, randomSeed = newSeed }--replicate numberInWave spawnAsteroid
-spawnAsteroids s                         = s
     where
         (ast, newSeed) = newAsteroids (numberInWave ((score . player) s)) ([], randomSeed s)
         newAsteroids :: Int -> ([Asteroid], StdGen) -> ([Asteroid], StdGen)
@@ -45,6 +44,7 @@ spawnAsteroids s                         = s
         newAsteroids i (as, gen) = newAsteroids (i-1) (asteroid : as, newGen)
             where
                 (asteroid, newGen) = randomBigAsteroid gen
+spawnAsteroids s = s
 
 
 

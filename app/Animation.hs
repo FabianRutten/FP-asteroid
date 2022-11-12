@@ -15,7 +15,7 @@ playerSpawnAnimation = MkAnimation True playerSpawnFunc 0 2
 
 playerSpawnFunc :: Float -> Float -> Picture -> Picture
 playerSpawnFunc st secs bmp | left >= 0.1 = Blank
-                            | otherwise = bmp
+                            | otherwise   = bmp
     where
         left = (secs - st) `mod'` 0.2
 
@@ -24,12 +24,14 @@ playerThrustAnimation :: Animation
 playerThrustAnimation = MkAnimation False playerThrustFunc 0 0.1
 
 playerThrustFunc :: Float -> Float -> Picture -> Picture
-playerThrustFunc st secs bmp = pictures [bmp, thrustBMP]
+playerThrustFunc st secs bmp | left >= 0.1 = pictures [bmp, thrustBMP]
+                             | otherwise   = bmp
     where
+        left = (secs - st) `mod'` 0.2 
         thrustBMP = pictures [l1,l2]
             where
-                l1 = line [(25,60),(40,80)]
-                l2 = line [(55,60),(40,80)]
+                l1 = line [(10,-60),(25,-80)]
+                l2 = line [(40,-60),(25,-80)]
 
 playerDeathAnimation :: Animation
 playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5

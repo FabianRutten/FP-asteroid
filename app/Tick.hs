@@ -85,7 +85,6 @@ instance Update Player where
         where
             drag e = e {speed = max 0 (speed e - speed e * playerDrag)}
 
-
 instance Update Asteroid where
     update :: Asteroid -> Asteroid
     update a = a {entityAsteroid = update (entityAsteroid a)}

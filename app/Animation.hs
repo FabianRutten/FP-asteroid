@@ -2,6 +2,7 @@ module Animation where
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.Picture
+import Data.Fixed (mod')
 
 
 data Animation = MkAnimation { running :: Bool
@@ -13,12 +14,10 @@ playerSpawnAnimation :: Animation
 playerSpawnAnimation = MkAnimation True playerSpawnFunc 0 2
 
 playerSpawnFunc :: Float -> Float -> Picture -> Picture
-playerSpawnFunc st secs bmp = playerDeathFunc st secs bmp
-playerSpawnFunc st secs bmp | left >= 10 =  bmp
-                            | otherwise = Blank
+playerSpawnFunc st secs bmp | left >= 0.1 = Blank
+                            | otherwise = bmp
     where
-        passedTime = secs - st
-        left = 10 `rem` round(passedTime * 100)
+        left = secs - st `mod'` 0.2
 
 
 playerThrustAnimation :: Animation
@@ -45,6 +44,7 @@ playerDeathFunc st secs _ = pictures $ translateFrames passedTime [l1,l2,l3]
         translateFrames t [g1,g2,g3] = [translate (-24*t) (24*t) g1
                                       , translate (24*t) (24*t) g2
                                       , translate 0 (-32*t)g3]
+        translateFrames _ _ = [Blank] -- never called
 
 activateAnimation :: Float -> Animation -> Animation
 activateAnimation f a = a{running = True, startTime = f}

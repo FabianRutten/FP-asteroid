@@ -14,16 +14,15 @@ updateTick =  update . spawnAsteroids . checkCollisions . checkAnimations--updat
 
 checkAnimations :: Space -> Space
 checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
-    where
+    where            
         t = time s
-        animationDone anim = running anim && not (any(\x-> timing x > t) $ aframes anim)
+        animationDone anim = running anim && t > startTime anim + duration anim
         updatePlayerAnimations :: Space -> Space
-        updatePlayerAnimations s | animationDone d = s{player = rp{invincible = True, spawn = sp{running = True, aframes = setAFramesTimes t $ aframes sp}}
-                                                          }
+        updatePlayerAnimations s | animationDone d = s{player = rp{invincible = True, spawn = activateAnimation t sp}}
                                  | animationDone sp = s{player = p{invincible = False, spawn = sp{running = False}}}
                                  | animationDone th = undefined
                                  | otherwise = s
-            where
+            where            
                 p = player s
                 d = death p
                 sp = spawn p

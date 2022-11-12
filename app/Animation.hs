@@ -5,39 +5,46 @@ import Graphics.Gloss.Data.Picture
 
 
 data Animation = MkAnimation { running :: Bool
-                             , frameFunc :: Float -> Picture -> Picture
-                             , startTime :: Float} --only one animation active at a time
+                             , frameFunc :: Float -> Float -> Picture -> Picture
+                             , startTime :: Float
+                             , duration :: Float}
 
 playerSpawnAnimation :: Animation
-playerSpawnAnimation = MkAnimation True playerSpawnFunc 0
+playerSpawnAnimation = MkAnimation True playerSpawnFunc 0 2
 
-playerSpawnFunc :: Float -> Picture -> Picture
-playerSpawnFunc = undefined
+playerSpawnFunc :: Float -> Float -> Picture -> Picture
+playerSpawnFunc st secs bmp = playerDeathFunc st secs bmp
+playerSpawnFunc st secs bmp | left >= 10 =  bmp
+                            | otherwise = Blank
+    where
+        passedTime = secs - st
+        left = 10 `rem` round(passedTime * 100)
+
 
 playerThrustAnimation :: Animation
-playerThrustAnimation = MkAnimation False playerThrustFunc 0
+playerThrustAnimation = MkAnimation False playerThrustFunc 0 0.1
 
-playerThrustFunc :: Float -> Picture -> Picture
+playerThrustFunc :: Float -> Float -> Picture -> Picture
 playerThrustFunc = undefined
 
 playerDeathAnimation :: Animation
-playerDeathAnimation = MkAnimation False playerDeathFunc 0
+playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5
 
-playerDeathFunc :: Float -> Picture -> Picture
-playerDeathFunc f p = 
+playerDeathFunc :: Float -> Float -> Picture -> Picture
+playerDeathFunc st secs _ = pictures $ translateFrames passedTime [l1,l2,l3]
+    where
         --playerDeathFrames code
+        passedTime = secs - st
         l1 :: Picture
-        l1 = line [(-25,-25),(0,25)]
+        l1 =  line [(-25,-25),(0,25)]
         l2 :: Picture
         l2 = line [(25,-25),(0,25)]
         l3 :: Picture
         l3 = line [(-15,-15),(15,-15)]
-        translateFrame :: ([Picture],Float) -> ([Picture],Float)
-        translateFrame ([g1,g2,g3],x) = ([translate (-3) 3 g1
-                                        , translate 3 3 g2
-                                        , translate 0 (-4) g3]
-                                       , x + 0.2)
-        translateFrame _ = ([], 0)
+        translateFrames :: Float -> [Picture] -> [Picture]
+        translateFrames t [g1,g2,g3] = [translate (-24*t) (24*t) g1
+                                      , translate (24*t) (24*t) g2
+                                      , translate 0 (-32*t)g3]
 
 activateAnimation :: Float -> Animation -> Animation
 activateAnimation f a = a{running = True, startTime = f}

@@ -24,7 +24,7 @@ checkLives s | (lives . player) s == 0 = gameOver s
              | otherwise = s
 
 playerDeath :: Float -> Player -> Player
-playerDeath secs p = p{death = d{running = True, aframes = setAFramesTimes secs $ aframes d}
+playerDeath secs p = p{death = d{running = True, startTime = secs}
                       , lives = max 0 (lives p - 1)
                       , invincible = True}
                  where

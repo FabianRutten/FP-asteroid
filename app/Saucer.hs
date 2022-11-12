@@ -10,9 +10,8 @@ pickNewDirection :: Saucer -> Saucer
 pickNewDirection = undefined
 
 saucerCalcBullet :: Player -> Saucer -> Bullet
-saucerCalcBullet p s = buildBullet 
+saucerCalcBullet p s = MkBullet ( MkEntity bulletSize sp bulletVec bulletSpeed bulletRadius ) False 0 
     where
-        buildBullet = MkBullet ( MkEntity bulletSize sp bulletVec bulletSpeed bulletRadius ) False 0
         bulletVec = normalizeV $ recur 0 `minPoint` sp
         ep = entityPlayer p
         spd = speed ep

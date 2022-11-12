@@ -8,12 +8,14 @@ import Graphics.Gloss.Data.Point ( Point )
 import Graphics.Gloss.Data.Vector ( mulSV )
 import Data.Maybe
 import Data.List
+import System.Random ( StdGen )
+import Random (randomBigAsteroid)
 
 updateTick :: Space -> Space
 updateTick =  update . spawnAsteroids . checkCollisions . checkAnimations--updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
 
 checkAnimations :: Space -> Space
-checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
+checkAnimations s = updatePlayerAnimations s
     where            
         t = time s
         animationDone anim = running anim && t > startTime anim + duration anim
@@ -29,26 +31,32 @@ checkAnimations s = updateTheRestAnimations $ updatePlayerAnimations s
                 th = thrust p
                 rp = resetPlayer (score p) (lives p)
 
-        updateTheRestAnimations :: Space -> Space
-        updateTheRestAnimations s = s
-
 resetPlayer :: Int -> Int -> Player
 resetPlayer s l = initialPlayer{score = s, lives = l}
 
 
 spawnAsteroids :: Space -> Space
-spawnAsteroids s | null (asteroids s) = s { asteroids = spawnAsteroid }--replicate numberInWave spawnAsteroid
+spawnAsteroids s | null (asteroids s) = s { asteroids = ast, randomSeed = newSeed }--replicate numberInWave spawnAsteroid
                  | otherwise = s
     where
-        spawnAsteroid :: [Asteroid]
-        spawnAsteroid = [MkAst $ MkEntity sizeBig    pickPoint pickDirectionB speedBig    (asteroidRadius sizeBig ),
-                         MkAst $ MkEntity sizeMedium pickPoint pickDirectionM speedMedium (asteroidRadius sizeMedium),
-                         MkAst $ MkEntity sizeSmall  pickPoint pickDirectionS speedSmall  (asteroidRadius sizeSmall)]
+        (ast, newSeed) = newAsteroids (waveNumber ((score . player) s)) ([], randomSeed s)
+        newAsteroids :: Int -> ([Asteroid], StdGen) -> ([Asteroid], StdGen)
+        newAsteroids 0 tup       = tup
+        newAsteroids i (as, gen) = newAsteroids (i-1) (asteroid : as, newGen)
             where
-                pickPoint      = (400,400)
-                pickDirectionB = (1,4)
-                pickDirectionM = (4,1)
-                pickDirectionS = (2,0)
+                (asteroid, newGen) = randomBigAsteroid gen
+
+        waveNumber :: Int -> Int
+        waveNumber score | score == 0    = 2
+                         | score >= 550  = 3
+                         | score >= 2200 = 4
+                         | score >= 3000 = 5
+                         | otherwise     = 10 -- good luck
+
+
+
+
+        
 
 class Update a where
     update :: a -> a

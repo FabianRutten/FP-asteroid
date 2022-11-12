@@ -59,12 +59,17 @@ sizeMedium = 1
 sizeSmall :: Float
 sizeSmall = 0.5
     --speeds
-speedBig :: Float
-speedBig = 1
-speedMedium :: Float
-speedMedium = 1.5
-speedSmall :: Float
-speedSmall = 2
+speedBig :: (Float, Float)
+speedBig = (0.5, 5)
+speedMedium :: (Float, Float)
+speedMedium = (1.5, 10)
+speedSmall :: (Float, Float)
+speedSmall = (2.5, 20)
+
+asteroidSpeed :: Float -> (Float, Float)
+asteroidSpeed x | x == sizeBig    = speedBig
+                | x == sizeMedium = speedMedium
+                | otherwise       = speedSmall
 
 
 --bitmap sizes in pixels, window is 800 by 800 pixels by default for reference

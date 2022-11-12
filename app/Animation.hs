@@ -5,49 +5,46 @@ import Graphics.Gloss.Data.Picture
 
 
 data Animation = MkAnimation { running :: Bool
-                             , aframes :: [AFrame]} --only one animation active at a time
-
-data AType = Death | Spawn | Thrust
-    deriving (Eq, Show)
-
-data AFrame = MkAFrame { picture :: Picture
-                       , timing :: Float}   --timing < time space -> render Frame 
+                             , frameFunc :: Float -> Float -> Picture -> Picture
+                             , startTime :: Float
+                             , duration :: Float}
 
 playerSpawnAnimation :: Animation
-playerSpawnAnimation = MkAnimation False playerSpawnFrames
+playerSpawnAnimation = MkAnimation True playerSpawnFunc 0 2
+
+playerSpawnFunc :: Float -> Float -> Picture -> Picture
+playerSpawnFunc st secs bmp = playerDeathFunc st secs bmp
+playerSpawnFunc st secs bmp | left >= 10 =  bmp
+                            | otherwise = Blank
+    where
+        passedTime = secs - st
+        left = 10 `rem` round(passedTime * 100)
+
 
 playerThrustAnimation :: Animation
-playerThrustAnimation = playerSpawnAnimation
+playerThrustAnimation = MkAnimation False playerThrustFunc 0 0.1
 
-playerSpawnFrames :: [AFrame]
-playerSpawnFrames = playerDeathFrames
+playerThrustFunc :: Float -> Float -> Picture -> Picture
+playerThrustFunc = undefined
 
 playerDeathAnimation :: Animation
-playerDeathAnimation = MkAnimation False playerDeathFrames
+playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5
 
-playerDeathFrames :: [AFrame]
-playerDeathFrames = playerDeathFrames' [f0]
+playerDeathFunc :: Float -> Float -> Picture -> Picture
+playerDeathFunc st secs _ = pictures $ translateFrames passedTime [l1,l2,l3]
     where
-        f (p,t) = MkAFrame (color white $ pictures p) t
-        f0 = (pics, 0.2)
-        pics = [l1,l2,l3]
-        playerDeathFrames' :: [([Picture],Float)] -> [AFrame]
-        playerDeathFrames' [] = []
-        playerDeathFrames' (x:xs) | length xs == 4 = map f $ reverse (x:xs)
-                                  | otherwise = playerDeathFrames' (translateFrame x : (x:xs))
         --playerDeathFrames code
+        passedTime = secs - st
         l1 :: Picture
-        l1 = line [(-25,-25),(0,25)]
+        l1 =  line [(-25,-25),(0,25)]
         l2 :: Picture
         l2 = line [(25,-25),(0,25)]
         l3 :: Picture
         l3 = line [(-15,-15),(15,-15)]
-        translateFrame :: ([Picture],Float) -> ([Picture],Float)
-        translateFrame ([g1,g2,g3],x) = ([translate (-3) 3 g1
-                                        , translate 3 3 g2
-                                        , translate 0 (-4) g3]
-                                       , x + 0.2)
-        translateFrame _ = ([], 0)
+        translateFrames :: Float -> [Picture] -> [Picture]
+        translateFrames t [g1,g2,g3] = [translate (-24*t) (24*t) g1
+                                      , translate (24*t) (24*t) g2
+                                      , translate 0 (-32*t)g3]
 
-setAFramesTimes :: Float -> [AFrame] -> [AFrame]
-setAFramesTimes f = map (\x-> x{timing = timing x + f})
+activateAnimation :: Float -> Animation -> Animation
+activateAnimation f a = a{running = True, startTime = f}

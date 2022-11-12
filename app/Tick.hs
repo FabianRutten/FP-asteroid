@@ -39,19 +39,12 @@ spawnAsteroids :: Space -> Space
 spawnAsteroids s | null (asteroids s) = s { asteroids = ast, randomSeed = newSeed }--replicate numberInWave spawnAsteroid
                  | otherwise = s
     where
-        (ast, newSeed) = newAsteroids (waveNumber ((score . player) s)) ([], randomSeed s)
+        (ast, newSeed) = newAsteroids (numberInWave ((score . player) s)) ([], randomSeed s)
         newAsteroids :: Int -> ([Asteroid], StdGen) -> ([Asteroid], StdGen)
         newAsteroids 0 tup       = tup
         newAsteroids i (as, gen) = newAsteroids (i-1) (asteroid : as, newGen)
             where
                 (asteroid, newGen) = randomBigAsteroid gen
-
-        waveNumber :: Int -> Int
-        waveNumber score | score == 0    = 2
-                         | score >= 550  = 3
-                         | score >= 2200 = 4
-                         | score >= 3000 = 5
-                         | otherwise     = 10 -- good luck
 
 
 

@@ -13,8 +13,8 @@ import Data.Maybe (isNothing, fromJust)
 import System.Directory (doesFileExist)
 
 view :: [Picture] -> Space -> IO Picture
-view bmps s | gameState s == GameOver = viewGameOver s bmps
-            | otherwise               = return $ viewPure s bmps
+view bmps s@MkSpace{gameState = GameOver} = viewGameOver s bmps
+view bmps s                               = return $ viewPure s bmps
 
 -- load and show highest scores
 viewGameOver :: Space -> [Picture] -> IO Picture
@@ -50,8 +50,8 @@ highscoreString = do
 
 -- choose correct view function based on the state of the game
 viewPure :: Space -> [Picture] -> Picture
-viewPure s | paused s    == Paused   = viewPaused s
-           | otherwise               = viewPlaying s
+viewPure s@MkSpace{paused = Paused} = viewPaused s
+viewPure s                         = viewPlaying s
 
 viewPaused :: Space -> [Picture] -> Picture
 viewPaused s bmps = pictures [renderSpace s bmps, staticText (-240, -20) 1 red "PAUSED"]

@@ -57,8 +57,8 @@ static s = paused s == Paused || gameState s == GameOver
 
 -- flip paused state
 pause :: Space -> Space
-pause s | paused s == Paused = s {paused = Unpaused}
-        | otherwise          = s {paused = Paused}
+pause s@MkSpace{paused = Paused} = s {paused = Unpaused}
+pause s                          = s {paused = Paused}
 
 shootPlayer :: KeyState -> Space -> Space
 shootPlayer Down s = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down

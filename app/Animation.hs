@@ -24,7 +24,12 @@ playerThrustAnimation :: Animation
 playerThrustAnimation = MkAnimation False playerThrustFunc 0 0.1
 
 playerThrustFunc :: Float -> Float -> Picture -> Picture
-playerThrustFunc = undefined
+playerThrustFunc st secs bmp = pictures [bmp, thrustBMP]
+    where
+        thrustBMP = pictures [l1,l2]
+            where
+                l1 = line [(25,60),(40,80)]
+                l2 = line [(55,60),(40,80)]
 
 playerDeathAnimation :: Animation
 playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5

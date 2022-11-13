@@ -1,12 +1,12 @@
 module Main where
 
-import Controller
-import Model
-import View
+import Controller ( input, step )
+import Model ( frameRate, initialSpace, screensize )
+import View ( view )
 
-import Graphics.Gloss (loadBMP)
-import Graphics.Gloss.Interface.IO.Game
-import System.Random (getStdGen)
+import Graphics.Gloss ( loadBMP )
+import Graphics.Gloss.Interface.IO.Game ( black, Display(InWindow), playIO )
+import System.Random ( getStdGen )
 
 main :: IO ()
 main = do

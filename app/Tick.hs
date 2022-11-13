@@ -1,16 +1,16 @@
 {-# LANGUAGE InstanceSigs #-}
 module Tick where
 import Model
-import Animation
+import Animation ( Animation(startTime, duration, running), activateAnimation )
 import Collision ( checkCollisions )
 import Graphics.Gloss.Data.Point ( Point )
 import Graphics.Gloss.Data.Vector ( mulSV )
 import System.Random ( StdGen )
-import Random
-import Saucer  
+import Random ( randomBigAsteroid, randomSaucer )
+import Saucer ( secondsBetweenMan, secondsBetweenShot, saucerAi )  
 
 updateTick :: Space -> Space
-updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions . updateSaucers
+updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions
 
 checkAnimations :: Space -> Space
 checkAnimations s = updatePlayerAnimations s
@@ -57,15 +57,6 @@ spawnSaucers s@MkSpace{saucers = []}= s{saucers = newScrs, randomSeed = newestSe
         newSaucers i (ss,gen) = newSaucers (i-1) (saucer:ss,newSeed)
         (saucer, newSeed) = randomSaucer (randomSeed s)
 spawnSaucers s = s 
-
-
-updateSaucers :: Space -> Space
-updateSaucers s = s{randomSeed = newSeed,saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs dur (lastShot x)}) (saucers s)}
-    where
-        (dur,newSeed) = secondsBetweenShot (randomSeed s)
-        addSecs :: Float -> Float -> Float
-        addSecs max a | a < max = a + (1 / fromIntegral frameRate )
-                      | otherwise = 0
 
 class Update a where
     update :: a -> a

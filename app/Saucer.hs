@@ -27,7 +27,7 @@ secondsBetweenShot :: StdGen -> (Float,StdGen)
 secondsBetweenShot gen = randomInRange gen (2, 5)
 
 saucerAi :: Space -> Space
-saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets, randomSeed = newestSeed }
+saucerAi s = updateSaucers s{saucers = map newSaucer srcs, bullets = newBullets, randomSeed = newestSeed }
     where
         srcs = saucers s
         newSaucer :: Saucer -> Saucer
@@ -40,6 +40,14 @@ saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets, randomSeed = 
                     where
                         (newB, gen2) = saucerCalcBullet gen (player s) sauce
                         (dur, gen1) = secondsBetweenShot gen
+
+updateSaucers :: Space -> Space
+updateSaucers s = s{randomSeed = newSeed,saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs dur (lastShot x)}) (saucers s)}
+    where
+        (dur,newSeed) = secondsBetweenShot (randomSeed s)
+        addSecs :: Float -> Float -> Float
+        addSecs max a | a < max = a + (1 / fromIntegral frameRate )
+                      | otherwise = 0
 
 pickNewDirection :: Saucer -> Space -> Saucer
 pickNewDirection s space = evadeAsteroid (player space) s ca

@@ -1,13 +1,12 @@
 -- | This module defines how the state changes
 --   in response to time and user input
-module Controller where
+module Controller (step, input) where
 
 import Model
 import Tick ( updateTick )
-
 import Graphics.Gloss.Interface.IO.Game
 import Graphics.Gloss.Data.Vector ( magV, mulSV, normalizeV, rotateV )
-import Animation
+import Animation ( Animation(running), activateAnimation )
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
@@ -34,7 +33,7 @@ inputKey (EventKey (Char key) Down _ _) s
     | key == 'p' = pause s                          -- pause/unpause when 'p' is pressed down
     | key == 'r' = restartGame s                    -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
-    | static s  || (running . death . player) s = s -- do nothing if game is static or if death animation is playing
+    | static s  = s                                 -- do nothing if game is static or if death animation is playing
     | otherwise = case sk of
         KeyLeft  -> setArrowkey 0 state s           -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
@@ -46,12 +45,10 @@ inputKey _ s = s                                    -- keep the same if no relev
 
 -- change the bool in arrowkeysDown at a certain position based on the state of the key
 setArrowkey :: Int -> KeyState -> Space -> Space
-setArrowkey pos state s
-  = let
+setArrowkey pos state s = s {arrowkeysDown = x ++ y : ys}
+    where
         (x,_:ys) = splitAt pos (arrowkeysDown s)
         y = state == Down
-    in
-        s {arrowkeysDown = x ++ y : ys}
 
 -- game is static if it is paused or game is over, meaning space won't change anymore
 static :: Space -> Bool
@@ -63,23 +60,24 @@ pause s@MkSpace{paused = Paused} = s {paused = Unpaused}
 pause s                          = s {paused = Paused}
 
 shootPlayer :: KeyState -> Space -> Space
-shootPlayer Down s = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down
-      where
-          p = player s
-          q = entityPlayer p
-          startPoint = position q `addPoint` mulSV (size q) (direction q)
-          newBullet = MkBullet newProjectile True 0
-          newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
+shootPlayer Down s | (running . death . player) s = s
+                   | otherwise                    = s {bullets = newBullet : bullets  s} -- only shoot when space is presed down and death animation is not playing
+    where
+        p = player s
+        q = entityPlayer p
+        startPoint = position q `addPoint` mulSV (size q) (direction q)
+        newBullet = MkBullet newProjectile True 0
+        newProjectile = MkEntity bulletSize startPoint (orientation p) bulletSpeed bulletRadius
 shootPlayer _ s = s
 
 
 fwdPlayer :: Float -> Player -> Player
 fwdPlayer time p = p {entityPlayer = q {direction = normalizeV movementV, speed = magV movementV}, thrust = th}
     where
-      q = entityPlayer p
-      movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
-      th | running $ thrust p = thrust p
-         | otherwise = activateAnimation time (thrust p)
+        q = entityPlayer p
+        movementV = mulSV (speed q) (direction q) `addPoint` mulSV playerThrust (orientation p)
+        th | running $ thrust p = thrust p
+           | otherwise = activateAnimation time (thrust p)
 
 
 rotatePlayer :: Float -> Player -> Player
@@ -92,7 +90,8 @@ restartGame s = initialSpace $ randomSeed s
 -- possible to hold multiple keys at the same time
 -- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
-alterPlayer s = s {player = (newP fwd (fwdPlayer (time s)) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)) p}
+alterPlayer s | (running . death . player) s = s
+              | otherwise = s {player = (newP fwd (fwdPlayer (time s)) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)) p}
     where
         p = player s
         [left, fwd, right] = arrowkeysDown s

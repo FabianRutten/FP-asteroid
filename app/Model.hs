@@ -2,20 +2,23 @@
 --   which represent the state of the game
 module Model where
 
-import Animation
-    ( Animation,
-      playerSpawnAnimation,
-      playerThrustAnimation,
-      playerDeathAnimation )
+import Animation ( Animation, playerSpawnAnimation, playerThrustAnimation, playerDeathAnimation )
 import System.Random ( StdGen )
 import Graphics.Gloss ( Point, Vector, Picture )
 import qualified Graphics.Gloss.Data.Point.Arithmetic as PA ( (+), (-))
 
+--points
 addPoint :: Point -> Point -> Point
 addPoint a b = a PA.+ b
 
 minPoint :: Point -> Point -> Point
 minPoint a b = a PA.- b
+
+distance2P :: Point -> Point -> Float
+distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' Prelude.+ y'*y')
+    where
+        x' = x1 - x2
+        y' = y1 - y2
 
 --application wide constants
 frameRate :: Int
@@ -184,7 +187,6 @@ data Entity = MkEntity { size      :: Float
                        , radius    :: Float
                        }
 
-
 data Saucer   = MkSaucer { entitySaucer   :: Entity
                          , lastManeuver   :: Float
                          , lastShot       :: Float}
@@ -205,9 +207,3 @@ data Player = MkPlayer { entityPlayer :: Entity
                        , spawn        :: Animation
                        , thrust       :: Animation
                        }
-
-distance2P :: Point -> Point -> Float
-distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' Prelude.+ y'*y')
-    where
-      x' = x1 - x2
-      y' = y1 - y2

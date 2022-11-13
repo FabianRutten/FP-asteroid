@@ -126,7 +126,9 @@ instance Renderable Asteroid where
 
 instance Renderable Saucer where
     render :: Picture -> Saucer -> Picture
-    render bmp s = render bmp (entitySaucer s)
+    render bmp s = translateToPosition (position e) . scaleUniform (size e) $ bmp
+        where
+            e = entitySaucer s
 
 instance Renderable Bullet where
     render :: Picture -> Bullet -> Picture

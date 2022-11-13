@@ -11,9 +11,12 @@ import Animation
 
 -- | Handle one iteration of the game
 step :: Float -> Space -> IO Space
-step secs space | static space = return space                               -- do nothing if game is static
-                | otherwise    = return . updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
+step secs = return . stepPure
 
+stepPure :: Space -> Space
+stepPure space | static space = space                             -- do nothing if game is static
+               | otherwise    = updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
+               
 -- | Handle user input
 input :: Event -> Space -> IO Space
 -- impure save to file when player presses 's' after game is over

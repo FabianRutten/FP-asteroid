@@ -52,8 +52,9 @@ spawnSaucers :: Space -> Space
 spawnSaucers s@MkSpace{saucers = []} = s{saucers = [saucer], randomSeed = newSeed}
     where
         (saucer, newSeed) = randomSaucer (randomSeed s)
-spawnSaucers s@MkSpace{saucers = xs} = s{saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs secondsBetweenShot (lastShot x)}) xs}
+spawnSaucers s@MkSpace{saucers = xs} = s{randomSeed = newSeed,saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs dur (lastShot x)}) xs}
     where
+        (dur,newSeed) = secondsBetweenShot (randomSeed s)
         addSecs :: Float -> Float -> Float
         addSecs max a | a < max = a + (1 / fromIntegral frameRate )
                       | otherwise = 0

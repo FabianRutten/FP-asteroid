@@ -55,7 +55,7 @@ playerLives = 5
 
 --bullet
 bulletSpeed :: Float
-bulletSpeed = playerMaxSpeed * 1.5 -- always higher then player!
+bulletSpeed = playerMaxSpeed * 1.2 -- always higher then player!
 
 bulletSize :: Float
 bulletSize = 0.5
@@ -74,7 +74,7 @@ numberInWaveS score | score >= 9000 = 3
                     | score >= 3000 = 2
                     | score >= 2200 = 1
                     | score >= 550  = 1
-                    | otherwise     = 1
+                    | otherwise     = 0
 
     --sizes
 sizeBig :: Float

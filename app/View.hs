@@ -89,7 +89,7 @@ renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
             bulletPics   = render           bulletBMP   (bullets s)
             asteroidPics = render           asteroidBMP (asteroids s)
             saucerPics   = render           saucerBMP   (saucers s)
-            debugLine    = staticText (-290, 110)  0.4 aquamarine $ (show . length . saucers) s
+            debugLine    = Blank --staticText (-290, 110)  0.4 aquamarine $ (show . length . saucers) s
 renderSpace s _ = Blank -- invalid lists render nothing
 
 class Renderable a where

@@ -3,11 +3,10 @@
 module Controller where
 
 import Model
-import Tick
+import Tick ( updateTick )
 
 import Graphics.Gloss.Interface.IO.Game
-import System.Random
-import Graphics.Gloss.Data.Vector
+import Graphics.Gloss.Data.Vector ( magV, mulSV, normalizeV, rotateV )
 import Animation
 
 -- | Handle one iteration of the game

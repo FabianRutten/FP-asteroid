@@ -1,4 +1,4 @@
-module Saucer where 
+module Saucer (saucerAi, secondsBetweenMan, secondsBetweenShot) where 
 
 import Model
 import Random
@@ -14,6 +14,19 @@ secondsBetweenMan = 0.1
 
 secondsBetweenShot :: Float
 secondsBetweenShot = 2
+
+saucerAi :: Space -> Space
+saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets }
+    where
+        srcs = saucers s
+        newSaucer :: Saucer -> Saucer
+        newSaucer src | lastManeuver src > secondsBetweenMan = pickNewDirection src s
+                      | otherwise = src
+        newBullets :: [Bullet]
+        newBullets = foldr f (bullets s) srcs
+            where
+                f sauce blts | lastShot sauce > secondsBetweenShot = saucerCalcBullet (player s) sauce : blts
+                             | otherwise = blts
 
 pickNewDirection :: Saucer -> Space -> Saucer
 pickNewDirection s space | null as = chasePlayer s $ player space

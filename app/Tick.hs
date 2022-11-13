@@ -5,14 +5,12 @@ import Animation
 import Collision ( checkCollisions )
 import Graphics.Gloss.Data.Point ( Point )
 import Graphics.Gloss.Data.Vector ( mulSV )
-import Data.Maybe
-import Data.List
 import System.Random ( StdGen )
 import Random
-import Saucer
+import Saucer  
 
 updateTick :: Space -> Space
-updateTick =  update . saucerAi . spawnSaucers . spawnAsteroids . checkCollisions . checkAnimations--updatePlayer . updateAsteroids . updateBullets . updateSaucers . checkCollisions
+updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions
 
 checkAnimations :: Space -> Space
 checkAnimations s = updatePlayerAnimations s
@@ -34,19 +32,9 @@ checkAnimations s = updatePlayerAnimations s
 resetPlayer :: Int -> Int -> Player
 resetPlayer s l = initialPlayer{score = s, lives = l}
 
-saucerAi :: Space -> Space
-saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets }
-    where
-        srcs = saucers s
-        newSaucer :: Saucer -> Saucer
-        newSaucer src | lastManeuver src > secondsBetweenMan = pickNewDirection src s
-                      | otherwise = src
-        newBullets :: [Bullet]
-        newBullets = foldr f (bullets s) srcs
-            where
-                f sauce blts | lastShot sauce > secondsBetweenShot = saucerCalcBullet (player s) sauce : blts
-                             | otherwise = blts
 
+spawnEnemies :: Space -> Space
+spawnEnemies = spawnSaucers . spawnAsteroids
 
 spawnAsteroids :: Space -> Space
 spawnAsteroids s@MkSpace{asteroids = (x:xs)} = s

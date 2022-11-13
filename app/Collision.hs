@@ -10,7 +10,7 @@ import Animation
 
 
 checkCollisions :: Space -> Space
-checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers
+checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers . bulletsWithSaucer
 
 asteroidsCollisionsWithPlayer :: Space -> Space
 asteroidsCollisionsWithPlayer s | invincible p = s
@@ -32,22 +32,22 @@ playerDeath secs p = p{death = d{running = True, startTime = secs}
 
 
 bulletsWithAsteroids :: Space -> Space
-bulletsWithAsteroids s = let (bs,as,newScore) = asteroidsBulletHits (bullets s) (asteroids s) (score $ player s)
+bulletsWithAsteroids s = let (bs,as,newScore, newSeed) = asteroidsBulletHits (bullets s) (asteroids s) (score $ player s)
                          in
-                        s {asteroids = as, bullets = bs, player = (player s){score = newScore} }
+                        s {randomSeed = newSeed, asteroids = as, bullets = bs, player = (player s){score = newScore} }
                    where
-                    asteroidsBulletHits :: [Bullet] -> [Asteroid] -> Int -> ([Bullet],[Asteroid],Int) --2 lists of asteroids and bullets that didnt hit anything, so to be displayed. Int is the new score
-                    asteroidsBulletHits bs as oldScore = asteroidsBulletHits' bs as ([],[], oldScore)
+                    asteroidsBulletHits :: [Bullet] -> [Asteroid] -> Int -> ([Bullet],[Asteroid],Int, StdGen) --2 lists of asteroids and bullets that didnt hit anything, so to be displayed. Int is the new score
+                    asteroidsBulletHits bs as oldScore = asteroidsBulletHits' bs as ([],[], oldScore, randomSeed s)
                             where
                         asteroidsBulletHits' :: [Bullet]
                               -> [Asteroid]
-                              -> ([Bullet],[Asteroid],Int)
-                              -> ([Bullet],[Asteroid],Int)
-                        asteroidsBulletHits' [] as (b1,_,newScore) = (b1, as,newScore)
-                        asteroidsBulletHits' bs [] (b1,_,newScore) = (bs++b1,[],newScore)
-                        asteroidsBulletHits' (b:bs) ast (b1,_,newScore)
-                                      | isNothing hit = asteroidsBulletHits' bs ast  (b:b1,[],newScore)
-                                      | otherwise     = asteroidsBulletHits' bs left  (b1, [], newScore + getScore b (fromJust hit))
+                              -> ([Bullet],[Asteroid],Int,StdGen)
+                              -> ([Bullet],[Asteroid],Int,StdGen)
+                        asteroidsBulletHits' [] as (b1,_,newScore, gen) = (b1, as,newScore, gen)
+                        asteroidsBulletHits' bs [] (b1,_,newScore, gen) = (bs++b1,[],newScore, gen)
+                        asteroidsBulletHits' (b:bs) ast (b1,_,newScore, gen)
+                                      | isNothing hit = asteroidsBulletHits' bs ast  (b:b1,[],newScore, gen)
+                                      | otherwise     = asteroidsBulletHits' bs left  (b1, [], newScore + getScore b (fromJust hit), seed)
                                 where
                                   (left,hit,seed) = asteroidEntityHit (randomSeed s) (entityBullet b) ast
                                   getScore :: Bullet -> Asteroid -> Int
@@ -97,6 +97,31 @@ playerWithSaucers s | invincible p  = s
                                 p          = player s
                                 (left,hit) = saucerEntityHit (saucers s) (entityPlayer p)
 
+bulletsWithPlayer :: Space -> Space
+bulletsWithPlayer s = s
+
+bulletsWithSaucer :: Space -> Space
+bulletsWithSaucer s = let (bs,scrs,newScore) = saucersBulletHits (bullets s) (saucers s) (score $ player s)
+                         in
+                        s {saucers = scrs, bullets = bs, player = (player s){score = newScore} }
+                   where
+                    saucersBulletHits :: [Bullet] -> [Saucer] -> Int -> ([Bullet],[Saucer],Int) --2 lists of asteroids and bullets that didnt hit anything, so to be displayed. Int is the new score
+                    saucersBulletHits bs as oldScore = saucersBulletHits' bs as ([],[], oldScore)
+                            where
+                        saucersBulletHits' :: [Bullet]
+                              -> [Saucer]
+                              -> ([Bullet],[Saucer],Int)
+                              -> ([Bullet],[Saucer],Int)
+                        saucersBulletHits' [] as (b1,_,newScore) = (b1, as,newScore)
+                        saucersBulletHits' bs [] (b1,_,newScore) = (bs++b1,[],newScore)
+                        saucersBulletHits' (b:bs) ast (b1,_,newScore)
+                                      | isNothing hit = saucersBulletHits' bs ast  (b:b1,[],newScore)
+                                      | otherwise                           = saucersBulletHits' bs left  (b1, [], newScore + getScore b (fromJust hit))
+                                where
+                                  (left,hit) = saucerEntityHit ast (entityBullet b)
+                                  getScore :: Bullet -> Saucer -> Int
+                                  getScore b a | fromPlayer b = saucersScore a
+                                               | otherwise = 0
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

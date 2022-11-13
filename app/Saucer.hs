@@ -54,7 +54,7 @@ chasePlayer s _ = s
 
 
 saucerCalcBullet :: Player -> Saucer -> Bullet
-saucerCalcBullet p s = MkBullet ( MkEntity bulletSize sp bulletVec bulletSpeed bulletRadius ) False 0
+saucerCalcBullet p s = MkBullet ( MkEntity bulletSize (sp `addPoint` (saucerRadius `mulSV` bulletVec) )bulletVec bulletSpeed bulletRadius ) False 0
     where
         bulletVec = normalizeV $ predictedPlayerPosition 0 `minPoint` sp
         ep = entityPlayer p        

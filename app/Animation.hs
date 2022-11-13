@@ -4,43 +4,43 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.Picture
 import Data.Fixed (mod')
 
-
-data Animation = MkAnimation { running :: Bool
-                             , frameFunc :: Float -> Float -> Picture -> Picture
+data Animation = MkAnimation { running   :: Bool
+                             , frameFunc :: Float -> Picture -> Picture
                              , startTime :: Float
-                             , duration :: Float}
+                             , duration  :: Float
+                             }
 
+--animations
 playerSpawnAnimation :: Animation
 playerSpawnAnimation = MkAnimation True playerSpawnFunc 0 2
-
-playerSpawnFunc :: Float -> Float -> Picture -> Picture
-playerSpawnFunc st secs bmp | left >= 0.05 = Blank
-                            | otherwise   = bmp
-    where
-        left = (secs - st) `mod'` 0.1
-
 
 playerThrustAnimation :: Animation
 playerThrustAnimation = MkAnimation False playerThrustFunc 0 1
 
-playerThrustFunc :: Float -> Float -> Picture -> Picture
-playerThrustFunc st secs bmp | left >= 0.1 = bmp 
-                             | otherwise   = pictures [bmp, thrustBMP]
+playerDeathAnimation :: Animation
+playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5
+
+
+playerSpawnFunc :: Float -> Picture -> Picture
+playerSpawnFunc passed bmp | left >= 0.05 = Blank
+                           | otherwise   = bmp
     where
-        left = (secs - st) `mod'` 0.2 
+        left = passed `mod'` 0.1
+
+playerThrustFunc :: Float -> Picture -> Picture
+playerThrustFunc passed bmp | left >= 0.1 = bmp 
+                            | otherwise   = (color white . pictures) [bmp, thrustBMP]
+    where
+        left = passed `mod'` 0.2 
         thrustBMP = pictures [l1,l2]
             where
                 l1 = line [(15,-35),(0,-55)]
                 l2 = line [(-15,-35),(0,-55)]
 
-playerDeathAnimation :: Animation
-playerDeathAnimation = MkAnimation False playerDeathFunc 0 1.5
-
-playerDeathFunc :: Float -> Float -> Picture -> Picture
-playerDeathFunc st secs _ = pictures $ translateFrames passedTime [l1,l2,l3]
+playerDeathFunc :: Float -> Picture -> Picture
+playerDeathFunc passed _ = (color white . pictures) $ translateFrames passed [l1,l2,l3]
     where
         --playerDeathFrames code
-        passedTime = secs - st
         l1 :: Picture
         l1 =  line [(-25,-25),(0,25)]
         l2 :: Picture

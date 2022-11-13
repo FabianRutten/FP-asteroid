@@ -3,10 +3,13 @@
 module Model where
 
 import Animation
-import System.Random
+    ( Animation,
+      playerSpawnAnimation,
+      playerThrustAnimation,
+      playerDeathAnimation )
+import System.Random ( StdGen )
 import Graphics.Gloss ( Point, Vector, Picture )
 import qualified Graphics.Gloss.Data.Point.Arithmetic as PA ( (+), (-))
-import System.Random.Stateful (STGen)
 
 addPoint :: Point -> Point -> Point
 addPoint a b = a PA.+ b
@@ -109,7 +112,6 @@ asteroidScore a = round $ 50 * size (entityAsteroid a)
 saucersScore :: Saucer -> Int
 saucersScore s = 200
 
-
 --initials
 initialSpace :: StdGen -> Space
 initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 1 
@@ -174,7 +176,6 @@ data Player = MkPlayer { entityPlayer :: Entity
                        , spawn        :: Animation
                        , thrust       :: Animation
                        }
-
 
 distance2P :: Point -> Point -> Float
 distance2P (x1 , y1) (x2 , y2) = sqrt (x'*x' Prelude.+ y'*y')

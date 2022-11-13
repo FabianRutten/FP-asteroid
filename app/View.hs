@@ -138,10 +138,12 @@ class Renderable a => Animatable a where
 instance Animatable Player where
     animate :: Float -> Picture -> Player -> Picture
     animate secs bmp p | null animations = render bmp p
-                       | otherwise = render (color white $ finalBMP bmp animations) p
+                       | otherwise       = render finalBMP p
         where
-            finalBMP :: Picture -> [Animation]-> Picture
-            finalBMP bmp [] = bmp
-            finalBMP bmp (x:xs) = finalBMP (frameFunc x (startTime x) secs bmp) xs
+            finalBMP = foldr f bmp animations
+                where
+                    f anim pic = frameFunc anim (secs - startTime anim) pic
+
+            -- check which animations are running
             animations :: [Animation]
             animations = filter running [death p, spawn p, thrust p]

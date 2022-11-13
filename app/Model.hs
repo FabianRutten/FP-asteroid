@@ -37,7 +37,7 @@ playerThrust :: Float
 playerThrust = 2
 
 playerRotateSpeed :: Float
-playerRotateSpeed = 0.09
+playerRotateSpeed = 0.15
 
 playerMaxSpeed :: Float
 playerMaxSpeed = 20
@@ -154,8 +154,10 @@ data Entity = MkEntity { size      :: Float
                        }
 
 
-
-newtype Saucer   = MkSaucer { entitySaucer   :: Entity}
+data Saucer   = MkSaucer { entitySaucer   :: Entity
+                         , lastManuaver   :: Float
+                         , lastShot       :: Float}
+                         
 newtype Asteroid = MkAst    { entityAsteroid :: Entity}
 
 data Bullet = MkBullet { entityBullet :: Entity

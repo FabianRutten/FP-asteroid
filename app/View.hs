@@ -118,7 +118,7 @@ instance Renderable Player where
             showLine p1 s p2 f = pictures [showText p1 s, showText p2 (show (f p))]
             showText p = staticText p 0.3 chartreuse
 
-            debug = (transRotScale (position e) (orientation p) 0.3 . color red . text . show . running . spawn) p
+            debug = Blank--(transRotScale (position e) (orientation p) 0.3 . color red . text . show . running . spawn) p
 
 instance Renderable Asteroid where
     render :: Picture -> Asteroid -> Picture

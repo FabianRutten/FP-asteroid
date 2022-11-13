@@ -29,7 +29,7 @@ halfscreen :: Float
 halfscreen = fromIntegral screensize / 2
 
 blackMargin :: Float
-blackMargin = 50
+blackMargin = 25
 
 maxBulletDistance :: Float
 maxBulletDistance = halfscreen * 1.6
@@ -50,6 +50,9 @@ playerMaxSpeed = 20
 playerSize :: Float
 playerSize = 0.5
 
+playerLives :: Int
+playerLives = 5
+
 --bullet
 bulletSpeed :: Float
 bulletSpeed = playerMaxSpeed * 1.5 -- always higher then player!
@@ -65,6 +68,13 @@ numberInWave score | score >= 9000 = 10
                    | score >= 2200 = 4
                    | score >= 550  = 3
                    | otherwise     = 2
+--amount of saucers to spawn based on the score of the player
+numberInWaveS :: Int -> Int
+numberInWaveS score | score >= 9000 = 3
+                    | score >= 3000 = 2
+                    | score >= 2200 = 1
+                    | score >= 550  = 1
+                    | otherwise     = 1
 
     --sizes
 sizeBig :: Float
@@ -79,7 +89,7 @@ speedBig = (0.5, 5)
 speedMedium :: (Float, Float)
 speedMedium = (1.5, 10)
 speedSmall :: (Float, Float)
-speedSmall = (2.5, 20)
+speedSmall = (2.5, 15)
 
 --saucer
     --saucer speed ranges
@@ -139,7 +149,7 @@ initialPlayer :: Player
 initialPlayer = MkPlayer
                     (MkEntity playerSize (0,0) (0,1) 0 playerRadius)
                     (0,1)
-                    3
+                    playerLives
                     0
                     False
                     playerDeathAnimation

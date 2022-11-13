@@ -10,7 +10,7 @@ import Animation
 
 
 checkCollisions :: Space -> Space
-checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers . bulletsWithSaucer . bulletsWithPlayer
+checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers . bulletsWithSaucer . bulletsWithPlayer . asteroidsWithSaucers
 
 asteroidsCollisionsWithPlayer :: Space -> Space
 asteroidsCollisionsWithPlayer s | invincible p = s
@@ -132,6 +132,17 @@ bulletsWithSaucer s = let (bs,scrs,newScore) = saucersBulletHits (bullets s) (sa
                                   getScore :: Bullet -> Saucer -> Int
                                   getScore b a | fromPlayer b = saucersScore a
                                                | otherwise = 0
+
+asteroidsWithSaucers :: Space -> Space
+asteroidsWithSaucers s = s{asteroids = ast, saucers = left, randomSeed = newSeed}
+      where
+            (ast,left,newSeed) = foldr f (asteroids s, [], randomSeed s) (saucers s)
+                  where
+                        f saucer all@(ast,left, gen) | isNothing ahit = (aLeft, saucer : left ,gen0)
+                                                     | otherwise = (aLeft,left,gen0)
+                              where
+                                    (aLeft,ahit,gen0) = asteroidEntityHit gen (entitySaucer saucer) ast
+--asteroidEntityHit :: StdGen -> Entity -> [Asteroid] -> ([Asteroid], Maybe Asteroid,StdGen)
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

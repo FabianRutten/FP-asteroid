@@ -10,7 +10,7 @@ import Random
 import Saucer  
 
 updateTick :: Space -> Space
-updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions
+updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions . updateSaucers
 
 checkAnimations :: Space -> Space
 checkAnimations s = updatePlayerAnimations s
@@ -34,11 +34,11 @@ resetPlayer s l = initialPlayer{score = s, lives = l}
 
 
 spawnEnemies :: Space -> Space
-spawnEnemies = spawnSaucers . spawnAsteroids
+spawnEnemies = spawnAsteroids
 
 spawnAsteroids :: Space -> Space
 spawnAsteroids s@MkSpace{asteroids = (x:xs)} = s
-spawnAsteroids s@MkSpace{asteroids = []} = s { asteroids = ast, randomSeed = newSeed }--replicate numberInWave spawnAsteroid
+spawnAsteroids s@MkSpace{asteroids = []} = spawnSaucers s { asteroids = ast, randomSeed = newSeed }--replicate numberInWave spawnAsteroid
     where
         (ast, newSeed) = newAsteroids (numberInWave ((score . player) s)) ([], randomSeed s)
         newAsteroids :: Int -> ([Asteroid], StdGen) -> ([Asteroid], StdGen)
@@ -49,21 +49,23 @@ spawnAsteroids s@MkSpace{asteroids = []} = s { asteroids = ast, randomSeed = new
 
 
 spawnSaucers :: Space -> Space
-spawnSaucers s@MkSpace{saucers = []} = s{saucers = [saucer], randomSeed = newSeed}
+spawnSaucers s@MkSpace{saucers = []}= s{saucers = newScrs, randomSeed = newestSeed}                                    
     where
+        (newScrs, newestSeed) = newSaucers (numberInWaveS ((score . player) s)) ([], randomSeed s)
+        newSaucers :: Int -> ([Saucer],StdGen) -> ([Saucer],StdGen)
+        newSaucers 0 n = n
+        newSaucers i (ss,gen) = newSaucers (i-1) (saucer:ss,newSeed)
         (saucer, newSeed) = randomSaucer (randomSeed s)
-spawnSaucers s@MkSpace{saucers = xs} = s{randomSeed = newSeed,saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs dur (lastShot x)}) xs}
+spawnSaucers s = s 
+
+
+updateSaucers :: Space -> Space
+updateSaucers s = s{randomSeed = newSeed,saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs dur (lastShot x)}) (saucers s)}
     where
         (dur,newSeed) = secondsBetweenShot (randomSeed s)
         addSecs :: Float -> Float -> Float
         addSecs max a | a < max = a + (1 / fromIntegral frameRate )
                       | otherwise = 0
-
-
-
-
-
-
 
 class Update a where
     update :: a -> a

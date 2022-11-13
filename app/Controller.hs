@@ -23,7 +23,7 @@ input e space = return (inputKey e space)
 
 saveScore :: Space -> IO Space
 saveScore s = do
-    appendFile "highscores.txt" ("Your score was " ++ (show . score . player) s ++ "\n")
+    appendFile "scores.txt" ("Your score was " ++ (show . score . player) s ++ "\n")
     return s {saved = Saved}
 
 inputKey :: Event -> Space -> Space

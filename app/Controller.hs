@@ -16,7 +16,7 @@ step secs = return . stepPure
 stepPure :: Space -> Space
 stepPure space | static space = space                             -- do nothing if game is static
                | otherwise    = updateTick . alterPlayer $ space  -- first alter player based on movementkeys then update game
-               
+
 -- | Handle user input
 input :: Event -> Space -> IO Space
 -- impure save to file when player presses 's' after game is over
@@ -31,17 +31,17 @@ saveScore s = do
 
 inputKey :: Event -> Space -> Space
 inputKey (EventKey (Char key) Down _ _) s
-    | key == 'p' = pause s                -- pause/unpause when 'p' is pressed down
-    | key == 'r' = restartGame s          -- restart game
+    | key == 'p' = pause s                          -- pause/unpause when 'p' is pressed down
+    | key == 'r' = restartGame s                    -- restart game
 inputKey (EventKey (SpecialKey sk) state _ _) s
-    | static s  = s                       -- do nothing if game is static
+    | static s  || (running . death . player) s = s -- do nothing if game is static or if death animation is playing
     | otherwise = case sk of
-        KeyLeft  -> setArrowkey 0 state s -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
+        KeyLeft  -> setArrowkey 0 state s           -- update arrowkeysDown list if one of the relevant arrowkeys is pressed
         KeyUp    -> setArrowkey 1 state s
         KeyRight -> setArrowkey 2 state s
-        KeySpace -> shootPlayer   state s -- shoot on space
-        _        -> s                     -- keep the same if no relevant special key is pressed
-inputKey _ s = s                          -- keep the same if no relevant key is pressed or no relevant event is called
+        KeySpace -> shootPlayer   state s           -- shoot on space
+        _        -> s                               -- keep the same if no relevant special key is pressed
+inputKey _ s = s                                    -- keep the same if no relevant key is pressed or no relevant event is called
 
 
 -- change the bool in arrowkeysDown at a certain position based on the state of the key
@@ -92,13 +92,8 @@ restartGame s = initialSpace $ randomSeed s
 -- possible to hold multiple keys at the same time
 -- called in step meaning it will keep updating the player if key is held down
 alterPlayer :: Space -> Space
-alterPlayer s | running (death p) = s
-              | otherwise         = s {player = alterPlayer' p}
+alterPlayer s = s {player = (newP fwd (fwdPlayer (time s)) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)) p}
     where
-        t = time s
         p = player s
         [left, fwd, right] = arrowkeysDown s
         newP b f = if b then f else id
-
-        alterPlayer' :: Player -> Player
-        alterPlayer' = newP fwd (fwdPlayer t) . newP right (rotatePlayer (-playerRotateSpeed)) . newP left (rotatePlayer playerRotateSpeed)

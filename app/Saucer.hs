@@ -1,4 +1,4 @@
-module Saucer (pickNewDirection, saucerCalcBullet) where 
+module Saucer where 
 
 import Model
 import Random
@@ -8,6 +8,12 @@ import Graphics.Gloss.Data.Vector
 --constants in algos
 evasionSkill :: Float
 evasionSkill = 10
+
+secondsBetweenMan :: Float
+secondsBetweenMan = 3
+
+secondsBetweenShot :: Float
+secondsBetweenShot = 2
 
 pickNewDirection :: Saucer -> Space -> Saucer
 pickNewDirection s space | null as = chasePlayer s $ player space

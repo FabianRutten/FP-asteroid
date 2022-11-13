@@ -9,7 +9,7 @@ import Data.Fixed (mod')
 
 randomLocation :: StdGen -> (Point, StdGen)
 randomLocation gen = (point, newgen)
-    where 
+    where
         (location, newgen) = randomR (0, 1600) gen
         point | location > 1200 = (-400, location - 1200)
               | location > 800  = (location - 800, -400)
@@ -26,7 +26,7 @@ randomDirection gen = (normalizeV (outputx, ouputy),newSeed)
 
 randomSpeed :: StdGen -> (Float, Float) -> (Float, StdGen)
 randomSpeed gen range = output
-    where 
+    where
         (output, seed) = (randomR range gen , seed)
 
 randomBigAsteroid :: StdGen -> (Asteroid, StdGen)
@@ -35,3 +35,10 @@ randomBigAsteroid gen = (MkAst $ MkEntity sizeBig rndPoint rndDirection rndSpeed
         (rndPoint,     gen1) = randomLocation  gen
         (rndDirection, gen2) = randomDirection gen1
         (rndSpeed,     gen3) = randomSpeed     gen2 (asteroidSpeed sizeBig)
+
+randomSaucer :: StdGen -> (Saucer, StdGen)
+randomSaucer gen0 = (MkSaucer (MkEntity sizeSaucer newP newD newSpd saucerRadius) 0 3, gen3)
+    where
+        (newP, gen1) = randomLocation gen0
+        (newD, gen2) = randomDirection gen1
+        (newSpd, gen3) = randomSpeed gen2 speedSaucer

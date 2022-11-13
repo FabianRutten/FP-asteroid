@@ -77,6 +77,14 @@ speedMedium = (1.5, 10)
 speedSmall :: (Float, Float)
 speedSmall = (2.5, 20)
 
+--saucer speed ranges
+speedSaucer :: (Float, Float)
+speedSaucer = speedMedium
+
+--saucer size
+sizeSaucer :: Float
+sizeSaucer = sizeMedium
+
 asteroidSpeed :: Float -> (Float, Float)
 asteroidSpeed x | x == sizeBig    = speedBig
                 | x == sizeMedium = speedMedium
@@ -93,6 +101,9 @@ asteroidBitmapSize = 90
 bulletBitmapSize :: Float
 bulletBitmapSize = 10
 
+saucerBitmapSize :: Float
+saucerBitmapSize = 180
+
 
 -- hitboxes for every entity are circles with radius relative to the bitmap size and the size of the entity in game, 
 playerRadius :: Float
@@ -103,6 +114,9 @@ asteroidRadius size = asteroidBitmapSize / 2 * size
 
 bulletRadius :: Float
 bulletRadius = bulletBitmapSize / 2
+
+saucerRadius :: Float
+saucerRadius = saucerBitmapSize / 2
 
 
 --scores
@@ -157,7 +171,7 @@ data Entity = MkEntity { size      :: Float
 
 
 data Saucer   = MkSaucer { entitySaucer   :: Entity
-                         , lastManuaver   :: Float
+                         , lastManeuver   :: Float
                          , lastShot       :: Float}
                          
 newtype Asteroid = MkAst    { entityAsteroid :: Entity}

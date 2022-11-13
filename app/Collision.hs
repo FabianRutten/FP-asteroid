@@ -10,7 +10,7 @@ import Animation
 
 
 checkCollisions :: Space -> Space
-checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer
+checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers
 
 asteroidsCollisionsWithPlayer :: Space -> Space
 asteroidsCollisionsWithPlayer s | invincible p = s
@@ -82,9 +82,20 @@ spawnChildAsteroids gen a | sizeA > sizeSmall = ([a1,a2],g2)
 checkHit :: Entity -> Entity -> Bool
 checkHit a b = distance2P (position a) (position b) <= (radius a + radius b)
 
+saucerEntityHit :: [Saucer] -> Entity -> ([Saucer],Maybe Saucer)
+saucerEntityHit scrs e = foldr f ([],Nothing) scrs
+      where
+            f :: Saucer -> ([Saucer],Maybe Saucer) -> ([Saucer],Maybe Saucer)
+            f x (left,hit) | checkHit (entitySaucer x) e = (left,Just x)
+                           | otherwise                   = (x:left, hit)
 
-
-
+playerWithSaucers :: Space -> Space
+playerWithSaucers s | invincible p  = s
+                    | isNothing hit = s
+                    | otherwise     = checkLives s {player = playerDeath (time s) p{score = score p + saucersScore (fromJust hit)}, saucers = left}
+                             where
+                                p          = player s
+                                (left,hit) = saucerEntityHit (saucers s) (entityPlayer p)
 
 
 gameOver :: Space -> Space

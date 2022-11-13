@@ -10,7 +10,7 @@ evasionSkill :: Float
 evasionSkill = 1
 
 secondsBetweenMan :: Float
-secondsBetweenMan = 3
+secondsBetweenMan = 0.1
 
 secondsBetweenShot :: Float
 secondsBetweenShot = 2

@@ -121,7 +121,7 @@ bulletRadius :: Float
 bulletRadius = bulletBitmapSize * bulletSize
 
 saucerRadius :: Float
-saucerRadius = saucerBitmapSize * sizeSaucer
+saucerRadius = (saucerBitmapSize - (saucerBitmapSize / 6))* sizeSaucer / 2
 
 
 --scores
@@ -133,16 +133,16 @@ saucersScore s = 200
 
 --initials
 initialSpace :: StdGen -> Space
-initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 1 
+initialSpace = MkSpace initialPlayer [] [] [] Unpaused Alive Unsaved (replicate 3 False) 1
 
 initialPlayer :: Player
-initialPlayer = MkPlayer 
-                    (MkEntity playerSize (0,0) (0,1) 0 playerRadius) 
+initialPlayer = MkPlayer
+                    (MkEntity playerSize (0,0) (0,1) 0 playerRadius)
                     (0,1)
-                    3 
-                    0 
-                    False 
-                    playerDeathAnimation 
+                    3
+                    0
+                    False
+                    playerDeathAnimation
                     playerSpawnAnimation
                     playerThrustAnimation
 
@@ -155,7 +155,7 @@ data Space = MkSpace { player        :: Player
                      , saved         :: Saved
                      , arrowkeysDown :: [Bool]
                      , time          :: Float
-                     , randomSeed    :: StdGen                     
+                     , randomSeed    :: StdGen
                      }
 
 data Paused = Paused | Unpaused
@@ -178,7 +178,7 @@ data Entity = MkEntity { size      :: Float
 data Saucer   = MkSaucer { entitySaucer   :: Entity
                          , lastManeuver   :: Float
                          , lastShot       :: Float}
-                         
+
 newtype Asteroid = MkAst    { entityAsteroid :: Entity}
 
 data Bullet = MkBullet { entityBullet :: Entity

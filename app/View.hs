@@ -32,7 +32,7 @@ viewGameOver s bmps = do
 -- read all scores from file, get the highest and put it in a string, if there is no high score give empty string
 highscoreString :: IO String
 highscoreString = do
-    file <- safeReadFile "highscores.txt"
+    file <- safeReadFile "scores.txt"
     let scores = (reverse . sort . map (read . last . words)) (lines file)
     return $ highscoreString' scores
     where

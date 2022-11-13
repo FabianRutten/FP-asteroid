@@ -82,13 +82,14 @@ staticText p s c = translateToPosition p . scaleUniform s . color c . text
 -- Turn entire space into a picture by calling render on all relevant attributes with corresponding bitmaps
 renderSpace :: Space -> [Picture] -> Picture
 renderSpace s [backgroundBMP, bulletBMP, asteroidBMP, saucerBMP, playerBMP]
-    = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic]
+    = pictures [background, bulletPics, asteroidPics, saucerPics, playerPic, debugLine]
         where
             background   = backgroundBMP
             playerPic    = animate (time s) playerBMP   (player s)
             bulletPics   = render           bulletBMP   (bullets s)
             asteroidPics = render           asteroidBMP (asteroids s)
             saucerPics   = render           saucerBMP   (saucers s)
+            debugLine    = staticText (-290, 110)  0.4 aquamarine $ (show . length . saucers) s
 renderSpace s _ = Blank -- invalid lists render nothing
 
 class Renderable a where
@@ -102,7 +103,7 @@ instance Renderable Entity where
     render :: Picture -> Entity -> Picture
     render bmp e = pictures [transRotScale (position e) (direction e) (size e) bmp, debug]
         where
-            debug = Blank --(transRotScale (position e) (direction e) 0.3 . color red . text . show . position) e
+            debug = (transRotScale (position e) (direction e) 0.3 . color red . text . show . position) e
 
 
 -- All instances to turn one of the attributes of the space into a picture

@@ -42,3 +42,7 @@ randomSaucer gen0 = (MkSaucer (MkEntity sizeSaucer newP newD newSpd saucerRadius
         (newP, gen1) = randomLocation gen0
         (newD, gen2) = randomDirection gen1
         (newSpd, gen3) = randomSpeed gen2 speedSaucer
+
+
+randomInRange :: StdGen -> (Float,Float) -> (Float,StdGen)
+randomInRange gen range = randomR range gen

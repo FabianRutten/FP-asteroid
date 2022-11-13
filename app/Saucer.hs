@@ -4,6 +4,7 @@ import Model
 import Random
 import Graphics.Gloss (Point)
 import Graphics.Gloss.Data.Vector
+import System.Random (StdGen)
 
 --constants in algos
 evasionSkill :: Float
@@ -12,8 +13,8 @@ evasionSkill = 1
 secondsBetweenMan :: Float
 secondsBetweenMan = 0.1
 
-secondsBetweenShot :: Float
-secondsBetweenShot = 2
+secondsBetweenShot :: StdGen -> (Float,StdGen)
+secondsBetweenShot gen = randomInRange gen (2, 5)
 
 saucerAi :: Space -> Space
 saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets }
@@ -25,8 +26,10 @@ saucerAi s = s{saucers = map newSaucer srcs, bullets = newBullets }
         newBullets :: [Bullet]
         newBullets = foldr f (bullets s) srcs
             where
-                f sauce blts | lastShot sauce > secondsBetweenShot = saucerCalcBullet (player s) sauce : blts
+                f sauce blts | lastShot sauce > dur = saucerCalcBullet (player s) sauce : blts
                              | otherwise = blts
+                    where
+                        (dur, newSeed) = secondsBetweenShot (randomSeed s)
 
 pickNewDirection :: Saucer -> Space -> Saucer
 pickNewDirection s space | null as = chasePlayer s $ player space

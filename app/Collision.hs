@@ -1,12 +1,10 @@
-module Collision where
+module Collision (checkCollisions) where
 
 import Model
-import Random
-import Data.Maybe
-import Graphics.Gloss.Data.Point
-import Graphics.Gloss.Data.Vector
+import Random ( randomDirection, randomSpeed )
+import Data.Maybe ( fromJust, isNothing )
 import System.Random (StdGen)
-import Animation
+import Animation ( Animation(running, startTime) )
 
 
 checkCollisions :: Space -> Space
@@ -142,7 +140,6 @@ asteroidsWithSaucers s = s{asteroids = ast, saucers = left, randomSeed = newSeed
                                                      | otherwise = (aLeft,left,gen0)
                               where
                                     (aLeft,ahit,gen0) = asteroidEntityHit gen (entitySaucer saucer) ast
---asteroidEntityHit :: StdGen -> Entity -> [Asteroid] -> ([Asteroid], Maybe Asteroid,StdGen)
 
 gameOver :: Space -> Space
 gameOver s = s{gameState = GameOver}

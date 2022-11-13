@@ -69,8 +69,8 @@ translateToPosition (x,y) = translate x y
 rotateToOrientation :: Vector -> Picture -> Picture
 rotateToOrientation v@(x,_) | x < 0     = rotate (-shift)
                             | otherwise = rotate shift
-                    where
-                        shift = radToDeg $ angleVV v (0,1)
+    where
+        shift = radToDeg $ angleVV v (0,1)
 
 scaleUniform :: Float -> Picture -> Picture
 scaleUniform s = scale s s

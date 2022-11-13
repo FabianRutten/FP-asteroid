@@ -12,6 +12,7 @@ import Saucer ( secondsBetweenMan, secondsBetweenShot, saucerAi )
 updateTick :: Space -> Space
 updateTick =  update . checkAnimations . saucerAi . spawnEnemies . checkCollisions
 
+--checks whether animations are done, else resets them and starts next one if applicable
 checkAnimations :: Space -> Space
 checkAnimations s = updatePlayerAnimations s
     where

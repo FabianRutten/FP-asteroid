@@ -64,10 +64,11 @@ spawnSaucers :: Space -> Space
 spawnSaucers s@MkSpace{saucers = []} = s{saucers = [saucer], randomSeed = newSeed}
     where
         (saucer, newSeed) = randomSaucer (randomSeed s)
-spawnSaucers s@MkSpace{saucers = xs} = s{saucers = map (\x-> x{lastManeuver = addSecs $ lastManeuver x, lastShot = addSecs $ lastShot x}) xs}
+spawnSaucers s@MkSpace{saucers = xs} = s{saucers = map (\x-> x{lastManeuver = addSecs secondsBetweenMan (lastManeuver x) , lastShot = addSecs secondsBetweenShot (lastShot x)}) xs}
     where
-        addSecs :: Float -> Float
-        addSecs a = a + (1 / fromIntegral frameRate )
+        addSecs :: Float -> Float -> Float
+        addSecs max a | a < max = a + (1 / fromIntegral frameRate )
+                      | otherwise = 0
 
 
 
@@ -87,7 +88,7 @@ instance Update Space where
     update s = s { player    = update (player s)
                  , asteroids = update (asteroids s)
                  , saucers   = update (saucers s)
-                 , bullets   = update (filter (\x -> distance x < halfscreen) (bullets s))
+                 , bullets   = update (filter (\x -> distance x < maxBulletDistance) (bullets s))
                  , time      = time s + 1 / fromIntegral frameRate
                  }
 

@@ -37,7 +37,7 @@ randomBigAsteroid gen = (MkAst $ MkEntity sizeBig rndPoint rndDirection rndSpeed
         (rndSpeed,     gen3) = randomSpeed     gen2 (asteroidSpeed sizeBig)
 
 randomSaucer :: StdGen -> (Saucer, StdGen)
-randomSaucer gen0 = (MkSaucer (MkEntity sizeSaucer newP newD newSpd saucerRadius) 0 3, gen3)
+randomSaucer gen0 = (MkSaucer (MkEntity sizeSaucer newP newD newSpd saucerRadius) 0 0, gen3)
     where
         (newP, gen1) = randomLocation gen0
         (newD, gen2) = randomDirection gen1

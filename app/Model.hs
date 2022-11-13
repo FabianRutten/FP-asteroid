@@ -31,6 +31,8 @@ halfscreen = fromIntegral screensize / 2
 blackMargin :: Float
 blackMargin = 50
 
+maxBulletDistance :: Float
+maxBulletDistance = halfscreen * 1.6
 
 --player
 playerDrag :: Float

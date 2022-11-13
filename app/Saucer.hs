@@ -7,7 +7,7 @@ import Graphics.Gloss.Data.Vector
 
 --constants in algos
 evasionSkill :: Float
-evasionSkill = 10
+evasionSkill = 1
 
 secondsBetweenMan :: Float
 secondsBetweenMan = 3

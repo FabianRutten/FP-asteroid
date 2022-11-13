@@ -103,7 +103,7 @@ instance Renderable Entity where
     render :: Picture -> Entity -> Picture
     render bmp e = pictures [transRotScale (position e) (direction e) (size e) bmp, debug]
         where
-            debug = (transRotScale (position e) (direction e) 0.3 . color red . text . show . position) e
+            debug = Blank--(transRotScale (position e) (direction e) 0.3 . color red . text . show . position) e
 
 
 -- All instances to turn one of the attributes of the space into a picture

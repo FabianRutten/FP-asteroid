@@ -10,7 +10,7 @@ import Animation
 
 
 checkCollisions :: Space -> Space
-checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers . bulletsWithSaucer
+checkCollisions = bulletsWithAsteroids . asteroidsCollisionsWithPlayer . playerWithSaucers . bulletsWithSaucer . bulletsWithPlayer
 
 asteroidsCollisionsWithPlayer :: Space -> Space
 asteroidsCollisionsWithPlayer s | invincible p = s
@@ -98,7 +98,17 @@ playerWithSaucers s | invincible p  = s
                                 (left,hit) = saucerEntityHit (saucers s) (entityPlayer p)
 
 bulletsWithPlayer :: Space -> Space
-bulletsWithPlayer s = s
+bulletsWithPlayer s | invincible p = s
+                    | isNothing hit = s
+                    | otherwise = checkLives s{player = playerDeath (time s) p}
+      where
+            p = player s
+            nonPBullets = filter (not . fromPlayer) (bullets s)
+            hit :: Maybe Bullet
+            hit = foldr f Nothing nonPBullets
+                  where
+                        f b mB | checkHit (entityBullet b) (entityPlayer p) = Just b
+                               | otherwise                                  = mB
 
 bulletsWithSaucer :: Space -> Space
 bulletsWithSaucer s = let (bs,scrs,newScore) = saucersBulletHits (bullets s) (saucers s) (score $ player s)
